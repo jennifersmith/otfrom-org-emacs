@@ -111,9 +111,10 @@ Stay classy!
 Thanks @bodil!
 
   #+BEGIN_SRC emacs-lisp
-   '(nyan-animate-nyancat t)
-   '(nyan-mode t)
-   '(nyan-wavy-trail t)
+   (add-to-list 'load-path (concat user-emacs-directory "non-elpa/nyan-mode/"))
+   (require 'nyan-mode)
+   (nyan-mode)
+
   #+END_SRC
    
 * Macintosh Specific Setup
