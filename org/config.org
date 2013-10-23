@@ -1,3 +1,38 @@
+* Inspiration
+
+I have totally ripped off most of this approach from @otfrom ... but
+they say imitation is the sincerest form of flattery.
+
+Stay classy!
+
+77777777777777777777777777777777777I777777777777777777
+77777777777777777777777?,.,:~??77777777777777777777777
+77777777777777777777777~.......=+II7777777777777777777
+7777777777777777777::~===:=::.....~7777777777777777777
+77777777777777777=......:::.,.......=77777777777777777
+7777777777777777=........:::=====::::...77777777777777
+7777777777777777..........:~=====+++++=.77777777777777
+7777777777777777....,:...,~=======+++++I77777777777777
+7777777777777777....:..,::~========++++777777777777777
+7777777777777777...,:,,:::=========++++777777777777777
+7777777777777777I...:.,:::==:.....:=+~.~77777777777777
+7777777777777777I....:.:~==::......~+..,77777777777777
+77777777777777777....::::::====~~=::+~.I77777777777777
+77777777777777777~.:=:::~~=====+=~::++++77777777777777
+777777777777777777I.::::::::::==:,=~=+.~77777777777777
+7777777777777777777+.::::::~::.:......,~77777777777777
+77777777777777777777..:::::=:~...,:~,::777I77777777777
+77777777777777777777..::::::=::::====:I777777777777777
+7777777777777777777?.::::::::::::,..::7777777777777777
+7777777777777777777.::::::::::...:==:?+777777777777777
+777777777777777??,.:::::::::::......=++++?777777777777
+777777777777.7:=...~::::::::::::====++~.::I+7777777777
+7777I.,77=+=..=:....::::::::::::=,.==+++:.++++++777777
+777:,..+,?===,.,..............,.....=~++:.++++.=+++777
+7+,:::..,.............:...::::.....=.~?+:..++,++=,++77
+7....::,.,.,....::::,.::,,:::::..,+?+I?+=...:~+==+=.,7
+
+
 * Helpers
 
   There are a number of helper functions that we'll need through the
@@ -21,26 +56,6 @@
    #+END_SRC
 
 * Globals
-
-** Hippie Expand
-
-   I have a soft spot for hippie-expand. There might be better ways to
-   do this though and I'm happy to take advice from anyone with a
-   strong opinion. :-D
-
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "M-RET") 'hippie-expand)
-   #+END_SRC
-
-** upcase and downcase region
-
-   I like to be able to do this. I get lots of things that come in
-   SHOUTING or that need to SHOUT.
-
-   #+BEGIN_SRC emacs-lisp
-     (put 'downcase-region 'disabled nil)
-     (put 'upcase-region 'disabled nil)
-   #+END_SRC
 
 ** diminish
 
@@ -70,6 +85,8 @@
      (setq uniquify-buffer-name-style 'post-forward)   
    #+END_SRC
  
+
+
 * non-elpa and work arounds
 
   At the moment we don't have any workarounds. It looked like we might
@@ -87,28 +104,20 @@
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'load-path (concat user-emacs-directory "non-elpa/"))
    #+END_SRC
+
+
+** nyan-mode
+
+Thanks @bodil!
+
+  #+BEGIN_SRC emacs-lisp
+   '(nyan-animate-nyancat t)
+   '(nyan-mode t)
+   '(nyan-wavy-trail t)
+  #+END_SRC
    
 * Macintosh Specific Setup
 
-** # is broken on UK Macs
-
-   On UK keyboards shift-3 is bound to £. This is a real pain. The #
-   character is usually bound to M-3. This also causes problems,
-   especially with things like window-number modes. We have a hacked
-   window-number mode below that maps window 3 to s-3, which solves
-   that problem. The # problem is solved with this bit of code below.
-   
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
-   #+END_SRC
-
-   We also need to deal with £ being a UTF-8 character so we don't get
-   annoying Â characters before non-ascii characters.
-
-   #+BEGIN_SRC emacs-lisp
-     (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-   #+END_SRC
-   
 ** window-number-super mode
 
    On a mac we have M-3 mapped to be the
@@ -165,16 +174,6 @@
       (load-theme 'emacslive-cyberpunk t)
     #+END_SRC
 
-** fonts
-
-   Ah, the joys of playing with different monospaced fonts on
-   emacs. Menlo seems to be the one I'm happiest with on my MBA.
-
-   #+BEGIN_SRC emacs-lisp
-     (when (memq window-system '(mac ns))
-       (set-default-font "-apple-Menlo-medium-normal-normal-*-12-*-*-*-m-0-iso10646-1"))
-   #+END_SRC
-   
 ** bars, menus and numbers
 
    I like no scroll bars, no toolbars and line and column numbers in
@@ -196,24 +195,6 @@
 
    #+BEGIN_SRC emacs-lisp
      (setq inhibit-startup-screen t)
-   #+END_SRC
-
-** alpha alpha alpha
-
-   I don't use this all the time, but sometimes, when I'm hacking
-   only on my diddy 13" laptop I like to have a window tailing a file
-   in the background while I'm writing something in the
-   foreground. This let's us toggle transparency. Who wouldn't like
-   that? I'm pretty sure I got this from [[https://twitter.com/IORayne][Anthony Grimes]]. 
-   
-   #+BEGIN_SRC emacs-lisp
-     (defun toggle-transparency ()
-       (interactive)
-       (let ((param (cadr (frame-parameter nil 'alpha))))
-         (if (and param (/= param 100))
-             (set-frame-parameter nil 'alpha '(100 100))
-           (set-frame-parameter nil 'alpha '(85 50)))))
-     (global-set-key (kbd "C-c t") 'toggle-transparency)
    #+END_SRC
 
 * directories, navigation, searching
@@ -290,67 +271,14 @@
     
 ** ace-jump-mode
 
+   TODO: I don't really know I understand this... too much new.
    Move quickly anywhere in the buffer in 3 keystrokes. We can move
    there with C-c j and back to where we started with C-c k.
    
    #+BEGIN_SRC emacs-lisp
-     (maybe-install-and-require 'ace-jump-mode)
-     (global-set-key (kbd "C-c j") 'ace-jump-mode)
-     (global-set-key (kbd "C-c k") 'ace-jump-mode-pop-mark)
-   #+END_SRC
-   
-* Communication Modes
-
-** twittering-mode
-
-   I have been accused by many ([[http://twitter.com/rrees][Robert Rees]] and [[http://twitter.com/cluttercup][Jane Dickson]] to name
-   but two) of being constantly on twitter. This is mostly fair. I'm
-   curious to see the revision history of this file and see if I
-   change this description before I declare .emacs bankruptcy again.
-
-   The best twitter client I've found is twittering-mode. 
-
-   #+BEGIN_SRC emacs-lisp
-     (maybe-install-and-require 'twittering-mode)    
-   #+END_SRC
-
-   I *don't* want to see the the status messages in the mini-buffer
-   when twitter fetches things.
-   
-   #+BEGIN_SRC emacs-lisp
-     (setq twittering-url-show-status nil)
-   #+END_SRC
-
-   I like to have the icon pictures.
-      
-   #+BEGIN_SRC emacs-lisp
-     (setq twittering-icon-mode 1)
-     (setq twittering-use-icon-storage t)
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'twittering-edit-mode-hook
-         (lambda () (ispell-minor-mode) (flyspell-mode)))
-   #+END_SRC
-
-   You can configure it to use a local, encrypted file for the
-   credentials as well, which makes re-connecting easier and
-   reasonably secure.
-
-   This didn't really work until I fixed the exec-path to get gpg in
-   it, which is in /usr/local/bin on my machine, so you need to add
-   the bits from [[$PATH is broken][$PATH is broken]] in the [[Macintosh Specific Setup][Macintosh Specific Setup]].
-
-   #+BEGIN_SRC emacs-lisp
-     (setq twittering-use-master-password t)
-   #+END_SRC
-
-   By default I want to get my replies and direct messages.
-
-   #+BEGIN_SRC emacs-lisp
-     (setq twittering-initial-timeline-spec-string
-           '(":replies"
-             ":direct_messages"))   
+     ;;(maybe-install-and-require 'ace-jump-mode)
+     ;;(global-set-key (kbd "C-c j") 'ace-jump-mode)
+     ;;(global-set-key (kbd "C-c k") 'ace-jump-mode-pop-mark)
    #+END_SRC
    
 * Programming Modes
@@ -384,6 +312,8 @@
        (diminish 'paredit-mode "()")
        (add-hook 'prog-mode-hook 'paredit-mode)
      #+END_SRC
+     
+     TODO: Yes, smartparens at least benefits from being supported :D
 
 *** rainbow-delimiters
 
@@ -568,41 +498,7 @@
                        (diminish 'auto-fill-function)))
    #+END_SRC
 
-** deft and org
-
-*** deft
-
-    deft-mode is a Notational Velocity like note taker. I really like
-    it for finding notes that are already there. The way it searches
-    for notes reminds me quite a lot of helm, so I'm wondering if I
-    might replace this with helm and org-mode. That would be one to ask
-    Kris Jenkins.
-
-    #+BEGIN_SRC emacs-lisp
-      (maybe-install-and-require 'deft)
-    #+END_SRC
-
-    We want to keep our deft notes in ~/org/deft
-
-    #+BEGIN_SRC emacs-lisp
-      (setq deft-directory "~/org/deft/")
-    #+END_SRC
-
-    We want the notes to be in org-mode format
-
-    #+BEGIN_SRC emacs-lisp
-      (setq deft-extension "org")
-      (setq deft-text-mode 'org-mode)
-    #+END_SRC
-
-    And we want f8 to be the key to get us to the top level search
-    list.
-
-    #+BEGIN_SRC emacs-lisp
-      (global-set-key [f8] 'deft)
-    #+END_SRC
-
-*** org-mode
+** org
 
     I also use org-mode on its own and would like to use it more. I
     used to be a complete planner-mode addict. I've never really
@@ -663,23 +559,7 @@
      (load-if-exists custom-file)
    #+END_SRC
 * Finishing
-
-** passwords and encrypted things
-
-   It is good to store your passwords and things in an encrypted
-   file. I call mine mellon, because you can only read it if you are
-   my friend and have the passphrase.
-
-   This does mean that every time you use it you have to give the
-   passphrase, but it does mean that you can keep all your passwords
-   for things like erc and stuff in a file reasonably safely (though
-   it will be in memory when emacs is running, so it isn't completely
-   secure).
-
-   #+BEGIN_SRC emacs-lisp
-     (load-if-exists (concat user-emacs-directory "local/mellon.el.gpg"))
-   #+END_SRC
-   
+  
 ** emacs-server
 
    Emacs startup time isn't nearly as much of a problem as it used to
@@ -709,4 +589,5 @@
 
    #+BEGIN_SRC emacs-lisp
      (message "Cogito ergo sum.")
+     (message "Otfrom, October 2013.")
    #+END_SRC
