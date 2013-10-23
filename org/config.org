@@ -86,6 +86,21 @@ Stay classy!
    #+END_SRC
  
 
+** save files
+
+I don't like save files polluting my precious work directories. I
+know you can global ignore them but they are still a little icky.
+
+   #+BEGIN_SRC emacs-lisp
+   (setq
+     backup-by-copying t      ; don't clobber symlinks
+     backup-directory-alist
+      '(("." . "~/.saves"))    ; don't litter my fs tree
+     delete-old-versions t
+     kept-new-versions 6
+     kept-old-versions 2
+     version-control t) 
+   #+END_SRC
 
 * non-elpa and work arounds
 
