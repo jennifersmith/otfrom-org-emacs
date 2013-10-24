@@ -486,6 +486,13 @@ Thanks @bodil!
                  (lambda () (local-set-key [s-f1] 'clojure-cheatsheet)))
      #+END_SRC
      
+** puppet
+... unfortunately
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'puppet-mode)
+    #+END_SRC
+
 ** pastebins
 
    gist, pastebin, refheap. All good ways of sharing snippets of code
