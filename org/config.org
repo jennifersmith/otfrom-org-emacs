@@ -326,7 +326,7 @@ Thanks @bodil!
      #+BEGIN_SRC emacs-lisp
        (maybe-install-and-require 'paredit)
        (diminish 'paredit-mode "()")
-       (add-hook 'prog-mode-hook 'paredit-mode)
+       (add-hook 'clojure-mode-hook 'paredit-mode)
      #+END_SRC
      
      TODO: Yes, smartparens at least benefits from being supported :D
@@ -367,8 +367,6 @@ Thanks @bodil!
     
 ** lisp modes
 
-   emacs-lisp and clojure are the two that really go in here for now,
-   though in the future scheme and common lisp could be added.
 
 *** lisp hooks
 
@@ -568,6 +566,12 @@ Thanks @bodil!
                         (lambda () (local-set-key [s-f1] 'helm-orgcard)))
      #+END_SRC
 
+** Markdown
+Github readmes and the like rely on markdown. I often want to see
+what it will look like before I push!
+   #+BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'markdown-mode)
+   #+END_SRC
 * Local Config
 ** custom.el
 
