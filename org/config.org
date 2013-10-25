@@ -516,7 +516,8 @@ Thanks @bodil!
                        (flyspell-mode 1)
                        (diminish 'flyspell-mode)
                        (auto-fill-mode 1)
-                       (diminish 'auto-fill-function)))
+                       (diminish 'auto-fill-function)
+                       (visual-line-mode 1))
    #+END_SRC
 
 ** org
