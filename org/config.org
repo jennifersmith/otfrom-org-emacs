@@ -1,4 +1,4 @@
-* Inspiration
+  * Inspiration
 
 I have totally ripped off most of this approach from @otfrom ... but
 they say imitation is the sincerest form of flattery.
@@ -517,7 +517,7 @@ Thanks @bodil!
                        (diminish 'flyspell-mode)
                        (auto-fill-mode 1)
                        (diminish 'auto-fill-function)
-                       (visual-line-mode 1))
+                       (visual-line-mode 1)))
    #+END_SRC
 
 ** org
