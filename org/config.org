@@ -235,7 +235,7 @@ I might follow this [[http://stackoverflow.com/questions/17362999/setting-both-f
 NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
 
 
-* directories, navigation, searching
+* general tool type things
 
 ** company
 
@@ -331,18 +331,7 @@ NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
       (maybe-install-and-require 'github-browse-file)
     #+END_SRC
 
-** ace-jump-mode
 
-   TODO: I don't really know I understand this... too much new.
-   Move quickly anywhere in the buffer in 3 keystrokes. We can move
-   there with C-c j and back to where we started with C-c k.
-   
-   #+DONT_BEGIN_SRC emacs-lisp
-     ;;(maybe-install-and-require 'ace-jump-mode)
-     ;;(global-set-key (kbd "C-c j") 'ace-jump-mode)
-     ;;(global-set-key (kbd "C-c k") 'ace-jump-mode-pop-mark)
-   #+DONT_END_SRC
-   
 ** ido
 
   " I've gotten a bit fed up with helm and it really freaks people out
