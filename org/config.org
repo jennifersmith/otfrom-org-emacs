@@ -345,6 +345,66 @@ NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
      (ido-mode 1)
      (setq ido-enable-flex-matching 1)
    #+END_SRC
+
+** window and buffer tweaking
+
+*** window movement
+
+    "I need to remap the windmove keys so that they don't conflict with
+    the org-mode or paredit keys."
+
+    Jen: Me too but those conflict with 'spectacles' which I cannot disable for emacs yet (see [[https://github.com/eczarny/spectacle/issues/254][issue]])
+
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key [C-s-up] 'windmove-up)
+      (global-set-key [C-s-down] 'windmove-down)
+      (global-set-key [C-s-right] 'windmove-right)
+      (global-set-key [C-s-left] 'windmove-left)
+    #+END_SRC
+
+*** buffer movement
+
+    "Sometimes the problem isn't that you want to move the cursor to a
+    particular window, but you want to move a buffer. buffer-move lets
+    you do that."
+
+Jen: These may conflict with orgmode stuff...
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'buffer-move)
+      (global-set-key (kbd "<s-up>")     'buf-move-up)
+     (global-set-key (kbd "<s-down>")   'buf-move-down)
+      (global-set-key (kbd "<s-left>")   'buf-move-left)
+      (global-set-key (kbd "<s-right>")  'buf-move-right)
+    #+END_SRC
+
+** ibuffer
+
+  " I've never used ibuffer much before, but many people swear by it
+   (rather than at it). I've tried it now and it looks good. So let's
+   rebind C-x C-b."
+
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-x C-b") 'ibuffer)
+   #+END_SRC
+
+** projectile
+
+   "[[https://github.com/bbatsov/projectile][projectile]] from [[http://twtitter.com/bbatsov][Bozhidar Batsov]] constrains and helps things like
+   searches so that they happen within a git repo or leiningen
+   project."
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'projectile)
+     (projectile-global-mode)
+   #+END_SRC
+
+  " But we don't need to see that projectile mode is running everywhere
+   so let's diminish it."
+
+   #+BEGIN_SRC emacs-lisp
+     (diminish 'projectile-mode)
+   #+END_SRC
+
 * Programming Modes
 ** prog-mode
 
