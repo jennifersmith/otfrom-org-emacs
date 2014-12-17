@@ -53,8 +53,26 @@ Stay classy!
              (load file)
              (message (format "Loading file: %s" file)))
          (message (format "No %s file. So not loading one." file))))   
+
    #+END_SRC
 
+** Demo stuff
+  #+BEGIN_SRC emacs-lisp
+(defun start-demo()
+  (interactive)
+  (delete-other-windows)
+  (text-scale-set 1)
+  (let* ((code-win (selected-window))
+        (repl-win (split-window-below 30)))
+    (require 'cider)
+    (select-window code-win)
+    (text-scale-set 3)
+    (select-window repl-win)
+    (text-scale-set 3)
+    (select-window code-win)))
+
+
+  #+END_SRC
 * Globals
 
 ** diminish
@@ -416,6 +434,7 @@ Thanks @bodil!
 
      #+BEGIN_SRC emacs-lisp
        (maybe-install-and-require 'cider)
+
      #+END_SRC
      
      Adding clojure-test-mode is a good idea too. Lots of things out
@@ -430,6 +449,11 @@ Thanks @bodil!
 
      #+BEGIN_SRC emacs-lisp
        (add-hook 'clojure-mode-hook lisp-hooks)
+     #+END_SRC
+
+     Have not figured out why this doesn't already happen
+     #+BEGIN_SRC
+       (add-hook 'clojure-mode-hook' cider-mode)
      #+END_SRC
      
      There are more things that we'll want that are specific to cider
@@ -619,3 +643,15 @@ what it will look like before I push!
      (message "Cogito ergo sum.")
      (message "Otfrom, October 2013.")
    #+END_SRC
+
+** TODO LIST
+
++ sync back installed packages  (automate this?)
++ yas-snippets
+
+* ADDD
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-structure-template-alist '("t" "#+TITLE:" ""))
+
+#+END_SRC
