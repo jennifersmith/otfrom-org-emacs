@@ -1,46 +1,16 @@
 * Introduction
 
-  I was inspired by [[https://github.com/t-ob/dotfiles][Tom O'Brien's dotfiles]] to do a org-mode version of
-  my emacs config. I also completely broke my emacs config trying to
-  do some other things and I figured I should fix it properly rather
-  than just getting the basics back together.
+  This is a gutted version of the org-mode-emacs config that @otfrom put together: https://github.com/otfrom/otfrom-org-emacs
 
-  The real content is in [[./org/config.org][config.org]], which would probably be more
-  interesting to read.
+  I am gradually building back everything I need, but I realised to grok emacs a little better that it might be good to start from bare-bones and work up to all the modifications. Plus I don't appear to be doing a great deal of Clojure these days.
 
-  This emacs config was set up to run on Mac OS X using the emacs from
-  the very good [[http://emacsformacosx.com/][emacsformacosx.com]]. I've not made it multi OS yet, and
-  a lot of the things solve problems that really only occur on a UK
-  Mac (things like the # key).
+* Progress
 
-  If you want to use this I suggest you do the following:
+** Step one: nuke everything
 
-  - create a emacs-config directory in your $HOME dir.
-  - clone this repo in that directory
-  - do a symbolic link from the clone to your .emacs.d directory
-    
-  This is what I normally do. This lets me clone or create lots of new
-  emacs configurations without trashing any of the earlier ones and
-  lets me try a lot of things out. It seems to be working for me so
-  far.
+<2014-12-17 Wed>
 
-* Features
+Starting by 'commenting out' all the original stuff by some crafty string replacement. As I carry on I realise that I know bugger-all emacs shortcuts really. Gratuitous use of whereis required.
 
-  Here are the things this emacs config gives examples for:
 
-  - clojure support with cider
-  - Separating custom.el from the rest of your files.
-  - hippie expand
-  - upcasing and downcasing
-  - Using diminish to clean up a mode-line
-  - Adding non-elpa files
-  - Using multiple elpa package archives
-  - Using color themes and custom fonts
-  - removing chrome from the windows
-  - very basic helm mode setup
-  - magit & git gutter mode
-  - using Emacs as a twitter client
-  - paredit and rainbow delimiters
-  - using add-hook
-  - deft and org-mode
-  - emacs on Mac OS X fixes
+
