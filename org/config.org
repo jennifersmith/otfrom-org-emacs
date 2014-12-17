@@ -222,117 +222,115 @@ Thanks @bodil!
      (setq inhibit-startup-screen t)
    #+END_SRC
 
-* Inspiration
+** Frames
 
-I have totally ripped off most of this approach from @otfrom ... but
-they say imitation is the sincerest form of flattery.
+Make it nice and big when I start. This is possibly something that might have to be changed when I am on thunderbold but whevs
 
-Stay classy!
+#+BEGIN_SRC emacs-lisp
+;;(setq default-frame-alist '((width . 140) (height . 60)))
 
-77777777777777777777777777777777777I777777777777777777
-77777777777777777777777?,.,:~??77777777777777777777777
-77777777777777777777777~.......=+II7777777777777777777
-7777777777777777777::~===:=::.....~7777777777777777777
-77777777777777777=......:::.,.......=77777777777777777
-7777777777777777=........:::=====::::...77777777777777
-7777777777777777..........:~=====+++++=.77777777777777
-7777777777777777....,:...,~=======+++++I77777777777777
-7777777777777777....:..,::~========++++777777777777777
-7777777777777777...,:,,:::=========++++777777777777777
-7777777777777777I...:.,:::==:.....:=+~.~77777777777777
-7777777777777777I....:.:~==::......~+..,77777777777777
-77777777777777777....::::::====~~=::+~.I77777777777777
-77777777777777777~.:=:::~~=====+=~::++++77777777777777
-777777777777777777I.::::::::::==:,=~=+.~77777777777777
-7777777777777777777+.::::::~::.:......,~77777777777777
-77777777777777777777..:::::=:~...,:~,::777I77777777777
-77777777777777777777..::::::=::::====:I777777777777777
-7777777777777777777?.::::::::::::,..::7777777777777777
-7777777777777777777.::::::::::...:==:?+777777777777777
-777777777777777??,.:::::::::::......=++++?777777777777
-777777777777.7:=...~::::::::::::====++~.::I+7777777777
-7777I.,77=+=..=:....::::::::::::=,.==+++:.++++++777777
-777:,..+,?===,.,..............,.....=~++:.++++.=+++777
-7+,:::..,.............:...::::.....=.~?+:..++,++=,++77
-7....::,.,.,....::::,.::,,:::::..,+?+I?+=...:~+==+=.,7
+#+END_SRC
+I might follow this [[http://stackoverflow.com/questions/17362999/setting-both-fullheight-and-width-in-emacs-on-os-x][stackoverflow]] if this is not sufficient.
 
-
-
-
+NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
 
 
 * directories, navigation, searching
+
+** company
+
+
+   "Complete Anything or [[http://company-mode.github.io/][company-mode]] seems to be the way to complete
+   things in emacs now."
+   
+   (Jen: Not tried this - but maybe better than what I have?)
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'company)
+     (add-hook 'after-init-hook 'global-company-mode)
+     (diminish 'company-mode "CA")
+   #+END_SRC
+
 ** dired
 
-   dired can do lots of things. I'm pretty basic in my use. I do like
-   to have the file listings use human friendly numbers though.
+   "dired can do lots of things. I'm pretty basic in my use. I do like
+   to have the file listings use human friendly numbers though."
 
-   #+DONT_BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
      (setq dired-listing-switches "-alh")
-   #+DONT_END_SRC
+   #+END_SRC
 
-** helm-mode
-
-   helm-mode is the succesor to anything.el. I don't really have my
-   head around it all yet, but I'm already pretty impressed with it so
-   I'll include it here and add more to it as I understand what is
-   going on.
-
-   My helm-mode guru is [[http://twitter.com/krisajenkins][Kris Jenkins]].
-   
-   #+DONT_BEGIN_SRC emacs-lisp
-     (maybe-install-and-require 'helm)
-     (helm-mode 1)
-   #+DONT_END_SRC
-
-   We can diminish how much room helm-mode takes up on the command
-   line.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (diminish 'helm-mode)
-   #+DONT_END_SRC
-   
 ** git
 
 *** magit
 
     magit is a *fantastic* mode for dealing with git.
-    
-    #+DONT_BEGIN_SRC emacs-lisp
+
+    #+BEGIN_SRC emacs-lisp
        (maybe-install-and-require 'magit)
-    #+DONT_END_SRC
-    
+    #+END_SRC
+
     I use magit-status a lot. So let's bind it to C-x g.
 
-    #+DONT_BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
       (global-set-key (kbd "C-x g") 'magit-status)
-    #+DONT_END_SRC
+    #+END_SRC
 
 *** git-gutter-mode+
 
     It is really nice having +/= in the gutter. I like it more than
     having line numbers and thus I've dumped linum-mode.
-    
-    #+DONT_BEGIN_SRC emacs-lisp
+
+    #+BEGIN_SRC emacs-lisp
       (maybe-install-and-require 'git-gutter-fringe+)
       (global-git-gutter+-mode t)
-    #+DONT_END_SRC
+    #+END_SRC
 
     It is also quite nice to be able to navigate a file by he git
     hunks. It makes it a bit easier to see what has changed since the
     last time in the context of the whole file.
 
-    #+DONT_BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
       (global-set-key (kbd "s-n") 'git-gutter+-next-hunk)
       (global-set-key (kbd "s-p") 'git-gutter+-previous-hunk)
-    #+DONT_END_SRC
+    #+END_SRC
 
     We can diminish the size of GitGutter in the mode-line
 
-    #+DONT_BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
       (diminish 'git-gutter+-mode)
-    #+DONT_END_SRC
-    
+    #+END_SRC
+
+*** magit-auto-revert
+
+    I like that I get an auto-revert when magit changes files based on
+    a pull or merge. I don't need to see it cluttering up my mode-line
+    though.
+
+    #+BEGIN_SRC emacs-lisp
+      (diminish 'magit-auto-revert-mode)
+    #+END_SRC
+
+*** git-messenger
+
+    Get the commit information for the current line. A bit like a mini
+    git blame.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'git-messenger)
+    #+END_SRC
+
+*** github-browse-file
+
+    When working with others I often want to point out a line I'm
+    looking at in a file we already have in github. I'd like to be
+    able to get the link rather than doing some sort of
+    paste/gist/refheap.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'github-browse-file)
+    #+END_SRC
+
 ** ace-jump-mode
 
    TODO: I don't really know I understand this... too much new.
@@ -345,6 +343,19 @@ Stay classy!
      ;;(global-set-key (kbd "C-c k") 'ace-jump-mode-pop-mark)
    #+DONT_END_SRC
    
+** ido
+
+  " I've gotten a bit fed up with helm and it really freaks people out
+   who aren't used to it when they come to use my emacs. ido mode does
+   similar things to helm in a number of circumstances and I can still
+   use helm for cheatsheets and other things"
+  
+   Jen: actually I just removed it full stop, this is more fun
+
+   #+BEGIN_SRC emacs-lisp
+     (ido-mode 1)
+     (setq ido-enable-flex-matching 1)
+   #+END_SRC
 * Programming Modes
 ** prog-mode
 
@@ -685,3 +696,44 @@ what it will look like before I push!
 (add-to-list 'org-structure-template-alist '("t" "#+TITLE:" ""))
 
 #+DONT_END_SRC
+
+* Inspiration
+
+I have totally ripped off most of this approach from @otfrom ... but
+they say imitation is the sincerest form of flattery.
+
+Everything in quotes is directly attributed to the @otfrom. Other ramblings are probably my own.
+
+Stay classy!
+
+77777777777777777777777777777777777I777777777777777777
+77777777777777777777777?,.,:~??77777777777777777777777
+77777777777777777777777~.......=+II7777777777777777777
+7777777777777777777::~===:=::.....~7777777777777777777
+77777777777777777=......:::.,.......=77777777777777777
+7777777777777777=........:::=====::::...77777777777777
+7777777777777777..........:~=====+++++=.77777777777777
+7777777777777777....,:...,~=======+++++I77777777777777
+7777777777777777....:..,::~========++++777777777777777
+7777777777777777...,:,,:::=========++++777777777777777
+7777777777777777I...:.,:::==:.....:=+~.~77777777777777
+7777777777777777I....:.:~==::......~+..,77777777777777
+77777777777777777....::::::====~~=::+~.I77777777777777
+77777777777777777~.:=:::~~=====+=~::++++77777777777777
+777777777777777777I.::::::::::==:,=~=+.~77777777777777
+7777777777777777777+.::::::~::.:......,~77777777777777
+77777777777777777777..:::::=:~...,:~,::777I77777777777
+77777777777777777777..::::::=::::====:I777777777777777
+7777777777777777777?.::::::::::::,..::7777777777777777
+7777777777777777777.::::::::::...:==:?+777777777777777
+777777777777777??,.:::::::::::......=++++?777777777777
+777777777777.7:=...~::::::::::::====++~.::I+7777777777
+7777I.,77=+=..=:....::::::::::::=,.==+++:.++++++777777
+777:,..+,?===,.,..............,.....=~++:.++++.=+++777
+7+,:::..,.............:...::::.....=.~?+:..++,++=,++77
+7....::,.,.,....::::,.::,,:::::..,+?+I?+=...:~+==+=.,7
+
+
+
+
+
