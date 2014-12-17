@@ -31,6 +31,197 @@ Apparently the built in `ls` on OSX does not support the --dired switch that see
 
 [[http://stackoverflow.com/questions/4076360/error-in-dired-sorting-on-os-x][Related StackOverflow
 ]]
+* Globals
+  
+  A set of modes etc. that will be globally loaded.
+  
+** diminish
+   
+   As we add lots of useful minor-modes the mode line can get a bit
+   unwieldy. diminish-mode helps us with that. We'll set it up here
+   and use it in various places throughout the setup.
+   
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'diminish)
+   #+END_SRC
+   
+** indent-tabs-mode
+   
+   Emacs uses tabs for indentation by default (though I believe it additionally depends on active modes. Anyway, not a usual practice for me so let's use spaces:
+
+   #+BEGIN_SRC emacs-lisp
+     (setq-default indent-tabs-mode nil)
+   #+END_SRC
+
+** uniquify
+
+Give nice unique names to similarly-named buffers. Useful if you have lots of files open with the same name.
+   #+BEGIN_SRC emacs-lisp
+     (require 'uniquify)
+     (setq uniquify-buffer-name-style 'post-forward)   
+   #+END_SRC
+ 
+
+** save files
+
+Throw temporary files into a ~/.saves/ directory. I am a complete nerd so I am upping the history.
+
+   #+BEGIN_SRC emacs-lisp
+   (setq
+     backup-by-copying t      ; don't clobber symlinks
+     backup-directory-alist
+      '(("." . "~/.saves"))    ; don't litter my fs tree
+     delete-old-versions nil
+     kept-new-versions 99
+     kept-old-versions 99
+     version-control t) 
+   #+END_SRC
+
+
+** Hippie Expand
+
+Following from @otfrom's original, I am going to try using hippie-expand. Note I am binding it to where dabbrev-expand usually sits. That's because my head has only room for one expansion combo and I can't be bothered to change it.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-/") 'hippie-expand)
+#+END_SRC
+
+
+** What do I use
+
+Profile your usage. Find out what you use the most by using keyfreq. 
+
+Yay... me analytics.
+
+#+BEGIN_SRC emacs-lisp
+
+(maybe-install-and-require 'keyfreq)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+#+END_SRC
+
+* non-elpa and work arounds
+
+For anything not available from elpa, a non-elpa directory! Currently not in use at the moment, but good to keep around.
+
+** non-elpa files
+
+   Unfortunately, we can't get everything we want from the package
+   archives or we might have files that we're working on locally that
+   we haven't released yet. We keep those in a non-elpa directory. We
+   need to add this to the load-path so that we can require the files
+   we have here.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'load-path (concat user-emacs-directory "non-elpa/"))
+   #+END_SRC
+     
+* Macintosh Specific Setup
+
+** $PATH is broken
+   From original
+   "If you don't run emacs in a terminal on Mac OS X then it can be
+   really awkward to get the stuff you want in your path. This is the
+   best way I've found so far to sort this out and get things like
+   ~/bin and /usr/loca/bin in a $PATH that emacs can access. I quite
+   like running emacs from outside the terminal.
+
+   Thanks to the lovely and helpful [[https://twitter.com/_tobrien][Tom O'Brien]] I've got a better way
+   of doing this and now my emacs environment will be in sync with my
+   shell. You can out more at the github page for
+   [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]."
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'exec-path-from-shell)
+     (when (memq window-system '(mac ns))
+       (exec-path-from-shell-initialize))
+   #+END_SRC"
+
+   
+* Make it Pretty
+
+** color themes
+
+*** custom-theme-directory
+
+    "Themes seem to be quite picky about where they live. They require
+    custom-theme-directory to be set. By default this is the same as
+    user-emacs-directory, which is usually ~/.emacs.d. I'd like to
+    keep them separate if possible. I learned this one by reading
+    some of [[https://github.com/sw1nn/dotfiles][Neale Swinnerton's dotfiles]]."
+
+    #+BEGIN_SRC emacs-lisp
+      (setq custom-theme-directory (concat user-emacs-directory "themes"))
+    #+END_SRC
+
+*** cyberpunk
+    
+    Sticking with the cyberpunk theme from [[https://github.com/overtone/emacs-live][emacs-live]] 
+
+    #+BEGIN_SRC emacs-lisp
+      (load-theme 'emacslive-cyberpunk t)
+    #+END_SRC
+    
+    
+** fonts
+
+Taking the advice from @otfrom again and going with his font settings. Menlo is pretty but set-default-font didn't work for me.
+#+BEGIN_SRC emacs-lisp
+(if (memq window-system '(mac ns))
+    (set-face-attribute 'default t :font  "Menlo" )
+  (set-default-font "Inconsolata-10"))
+
+#+END_SRC
+
+** bars, menus and numbers
+
+Let's kill the crap around the edges but give a little bit of navigation with col/line umbers
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(line-number-mode 1)
+(column-number-mode 1)
+
+#+END_SRC
+*** nyan-mode
+
+Thanks @bodil!
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'nyan-mode)
+(nyan-mode)
+#+END_SRC
+
+*** Transparency
+
+"   I don't use this all the time, but sometimes, when I'm hacking
+   only on my diddy 13" laptop I like to have a window tailing a file
+   in the background while I'm writing something in the
+   foreground. This let's us toggle transparency. Who wouldn't like
+   that? I'm pretty sure I got this from [[https://twitter.com/IORayne][Anthony Grimes]].
+"
+(Jen: This is awesome!)
+#+BEGIN_SRC emacs-lisp
+
+
+(defun toggle-transparency ()
+  (interactive)
+  (let ((param (cadr (frame-parameter nil 'alpha))))
+    (if (and param (/= param 100))
+        (set-frame-parameter nil 'alpha '(100 100))
+      (set-frame-parameter nil 'alpha '(85 50)))))
+(global-set-key (kbd "C-c t") 'toggle-transparency)
+
+#+END_SRC
+** Startup Screen
+
+   I'd also like to ski the startup screen and go straight to
+   the *scratch* buffer.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq inhibit-startup-screen t)
+   #+END_SRC
+
 * Inspiration
 
 I have totally ripped off most of this approach from @otfrom ... but
@@ -66,203 +257,9 @@ Stay classy!
 7....::,.,.,....::::,.::,,:::::..,+?+I?+=...:~+==+=.,7
 
 
-* Helpers
-
-  There are a number of helper functions that we'll need through the
-  rest of this. We'll just define them up here.
-
-** load-if-exists
-
-   This is just a nice function to load a file if it exists, but just
-   print a message rather than an error if it doesn't. This is handy
-   for things like loading specific local config that you don't want
-   to go into github or be shared such as erc nicks, passwords, blog
-   rolls, etc.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (defun load-if-exists (file)
-       (if (file-exists-p file)
-           (progn
-             (load file)
-             (message (format "Loading file: %s" file)))
-         (message (format "No %s file. So not loading one." file))))   
-
-   #+END_SRC
-
-** Demo stuff
-  #+DONT_BEGIN_SRC emacs-lisp
-(defun start-demo()
-  (interactive)
-  (delete-other-windows)
-  (text-scale-set 1)
-  (let* ((code-win (selected-window))
-        (repl-win (split-window-below 30)))
-    (require 'cider)
-    (select-window code-win)
-    (text-scale-set 3)
-    (select-window repl-win)
-    (text-scale-set 3)
-    (select-window code-win)))
 
 
-  #+DONT_END_SRC
-* Globals
 
-** diminish
-
-   As we add lots of useful minor-modes the mode line can get a bit
-   unwieldy. diminish-mode helps us with that. We'll set it up here
-   and use it in various places throughout the setup.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (maybe-install-and-require 'diminish)
-   #+DONT_END_SRC
-   
-** Tabs are Evil
-
-   I mean, not like evil-mode is good for vi users who want to use
-   emacs, which is fine, and obviously not like a truly evil thing,
-   but you know, not what I want. Hey, I can use hyperbole in my
-   org-mode files if I want to.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (setq-default indent-tabs-mode nil)
-   #+DONT_END_SRC
-
-** uniquify
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (require 'uniquify)
-     (setq uniquify-buffer-name-style 'post-forward)   
-   #+DONT_END_SRC
- 
-
-** save files
-
-I don't like save files polluting my precious work directories. I
-know you can global ignore them but they are still a little icky.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-   (setq
-     backup-by-copying t      ; don't clobber symlinks
-     backup-directory-alist
-      '(("." . "~/.saves"))    ; don't litter my fs tree
-     delete-old-versions t
-     kept-new-versions 6
-     kept-old-versions 2
-     version-control t) 
-   #+DONT_END_SRC
-
-* non-elpa and work arounds
-
-  At the moment we don't have any workarounds. It looked like we might
-  need one for cider for a while but the marvelously helpful grand
-  master of the [[https://github.com/clojure-emacs][clojure Emacs repo]] [[http://twitter.com/bbatsov][Bozhidar Batsov]] has fixed it.
-
-** non-elpa files
-
-   Unfortunately, we can't get everything we want from the package
-   archives or we might have files that we're working on locally that
-   we haven't released yet. We keep those in a non-elpa directory. We
-   need to add this to the load-path so that we can require the files
-   we have here.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (add-to-list 'load-path (concat user-emacs-directory "non-elpa/"))
-   #+DONT_END_SRC
-
-
-** nyan-mode
-
-Thanks @bodil!
-
-  #+DONT_BEGIN_SRC emacs-lisp
-   (add-to-list 'load-path (concat user-emacs-directory "non-elpa/nyan-mode/"))
-   (require 'nyan-mode)
-   (nyan-mode)
-
-  #+DONT_END_SRC
-   
-* Macintosh Specific Setup
-
-** window-number-super mode
-
-   On a mac we have M-3 mapped to be the
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (require 'window-number-super)
-     (window-number-mode 1) ;; for the window numbers
-     (window-number-super-mode 1) ;; for the super key binding        
-   #+DONT_END_SRC
-   
-** $PATH is broken
-
-   If you don't run emacs in a terminal on Mac OS X then it can be
-   really awkward to get the stuff you want in your path. This is the
-   best way I've found so far to sort this out and get things like
-   ~/bin and /usr/loca/bin in a $PATH that emacs can access. I quite
-   like running emacs from outside the terminal.
-
-   Thanks to the lovely and helpful [[https://twitter.com/_tobrien][Tom O'Brien]] I've got a better way
-   of doing this and now my emacs environment will be in sync with my
-   shell. You can out more at the github page for
-   [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]].
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (maybe-install-and-require 'exec-path-from-shell)
-     (when (memq window-system '(mac ns))
-       (exec-path-from-shell-initialize))
-   #+DONT_END_SRC
-
-* Make it Pretty
-
-** color themes
-
-*** custom-theme-directory
-
-    Themes seem to be quite picky about where they live. They require
-    custom-theme-directory to be set. By default this is the same as
-    user-emacs-directory, which is usually ~/.emacs.d. I'd like to
-    keep them separate if possible. I learned this one by reading
-    some of [[https://github.com/sw1nn/dotfiles][Neale Swinnerton's dotfiles]].
-
-    #+DONT_BEGIN_SRC emacs-lisp
-      (setq custom-theme-directory (concat user-emacs-directory "themes"))
-    #+DONT_END_SRC
-
-*** cyberpunk
-    
-    I really like the cyberpunk theme from [[https://github.com/overtone/emacs-live][emacs-live]] and [[https://twitter.com/samaaron][Sam Aaron]] is
-    a lovely guy. I wanted to avoid needing the old color-theme
-    mode. [[https://twitter.com/rikardglans][Rikard Glans]] was nice enought to port it over to the new
-    stuff.
-
-    #+DONT_BEGIN_SRC emacs-lisp
-      (load-theme 'emacslive-cyberpunk t)
-    #+DONT_END_SRC
-
-** bars, menus and numbers
-
-   I like no scroll bars, no toolbars and line and column numbers in
-   the mode-line. I like having the menus, unless I"m in a terminal as
-   I sometimes discover keybindings or functions I wasn't aware of
-   before.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (tool-bar-mode -1)
-     (scroll-bar-mode -1)
-     (line-number-mode 1)
-     (column-number-mode 1)
-   #+DONT_END_SRC
-
-** Startup Screen
-
-   I'd also like to ski the startup screen and go straight to
-   the *scratch* buffer.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (setq inhibit-startup-screen t)
-   #+DONT_END_SRC
 
 * directories, navigation, searching
 ** dired
