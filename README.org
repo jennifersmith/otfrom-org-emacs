@@ -13,4 +13,19 @@
 Starting by 'commenting out' all the original stuff by some crafty string replacement. As I carry on I realise that I know bugger-all emacs shortcuts really. Gratuitous use of whereis required.
 
 
+** Step two: We will rebuild [2014-12-20 Sat 08:18]
 
+Most stuff is now in the config file. Taken a few nifty pieces of
+advice from the upstream version. Added a few customisations of my
+own - mainly around file locations.
+
+Will still have to build up the tooling for
+ruby/python/R/cloudformation (seriously lacking there) plus
+organisational stuff but I feel in a good state.
+
+Last couple of things to do around making sure that I know what
+packages I had before compared to now as I have been arbitrarily
+installing stuff. I think that's fine to do but I wanna check the
+elpa/ directory occasionally to understand what has been added. Shame
+that the version numbers make that a little hard to do by comparing
+git history (helm is still installed... even if it is updated).

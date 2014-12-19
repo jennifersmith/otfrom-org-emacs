@@ -1297,7 +1297,8 @@ Stay classy!
 ** TODO Check packages into git so I know what is being used
 ** TODO emacs server
 ** TODO Shove in some of the stuff in the local/custom.el into here
-
+** TODO Visual line mode or word wrap configuration?
+** TODO Timestamps with times by default?
 ** Fixes/ideas
 *** TODO Find a better way of remembering shortcuts !
 *** TODO org timestamp default to minutes and second?
