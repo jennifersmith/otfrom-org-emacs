@@ -64,6 +64,7 @@ Give nice unique names to similarly-named buffers. Useful if you have lots of fi
 
 ** save files
 
+*** Temp files
 Throw temporary files into a ~/.saves/ directory. I am a complete nerd so I am upping the history.
 
    #+BEGIN_SRC emacs-lisp
@@ -76,6 +77,16 @@ Throw temporary files into a ~/.saves/ directory. I am a complete nerd so I am u
      kept-old-versions 99
      version-control t)
    #+END_SRC
+
+*** Bookmarks
+
+These I seem to use by accident by keyboard stabbing. I could disable
+them but I am interested to see if they are useful.
+
+#+BEGIN_SRC emacs-lisp
+(setq bookmark-default-file "~/.emacs.d/private/bookmarks")
+
+#+END_SRC
 
 
 ** Hippie Expand
