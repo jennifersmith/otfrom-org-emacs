@@ -529,8 +529,44 @@ All from @otfrom
        (setq markdown-open-command "open")
      #+END_SRC
 
+** wc-mode
+   - Note taken on [2014-12-20 Sat 09:50] \\
+     wc-mode also has some fun stuff around wordcount goals. Maybe this
+     would be a fun thing to try.
+
+How many words have I written? Great for procrastinating.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'wc-mode)
+(add-hook 'text-mode-hook
+               (lambda ()
+            (wc-mode 1)))
+#+END_SRC
+
+This sets a minimal wordcount display - total number of words and
+number of words that I haven't saved yet!
+#+BEGIN_SRC emacs-lisp
+(setq wc-modeline-format "[%tw(%w)w]")
+#+END_SRC
+
+
+* Org mode
+
+I am not as sophisticated as @otfrom in my use of orgmode (yet,
+ever?). But I am starting to put in a few tweaks here and there.
+
+** Refile
+
+*** TODO add back the level 2 max level stuff here
 
 * Programming Modes
+** Additional stuff to be added
+*** TODO csharp-mode
+*** TODO dockerfile-mode
+*** TODO rspec-mode
+*** TODO ruby-mode
+*** TODO yasnippet-bundle
+
 ** prog-mode
 
    prog-mode and the prog-mode-hook are at the basis of most of the
@@ -806,7 +842,6 @@ Jen: edited to be clojure only previously .. .not sure why.
     #+DONT_BEGIN_SRC emacs-lisp
       (maybe-install-and-require 'refheap)
     #+DONT_END_SRC
-
 
 
 ** lisp modes
@@ -1122,7 +1157,6 @@ Jen: edited to be clojure only previously .. .not sure why.
      #+END_SRC
 
 ** python
-
 ** javascript
 
    According to [[http://twitter.com/sw1nn][Neale Swinnerton]] js2-mode is the way to go.
@@ -1179,10 +1213,25 @@ Jen: edited to be clojure only previously .. .not sure why.
 
    Lots of great things for sorting, unsorting, munging and editing
    csv files.
+*** TODO Last run couldnt find csv-mode
 
-   #+BEGIN_SRC emacs-lisp
+   #+DONTBEGIN_SRC emacs-lisp
      (maybe-install-and-require 'csv-mode)
-   #+END_SRC
+   #+DONTEND_SRC
+
+
+
+** graphviz-dot-mode
+
+Is this a text format? Or a data format? For some bizarre reason, I
+tend to do a lot of note taking in dot mode for graphs and stuff like
+that.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'graphviz-dot-mode)
+
+#+END_SRC
+
 
 * Notification Systems
 
@@ -1239,13 +1288,8 @@ Jen: edited to be clojure only previously .. .not sure why.
 
 * Misc stuffs
 
-I should put these things somewhere nice...
+Thankfully empty
 
-#+BEGIN_SRC emacs-lisp
-
-(add-to-list 'org-structure-template-alist '("t" "#+TITLE:" ""))
-
-#+END_SRC
 
 * Inspiration
 
@@ -1291,15 +1335,40 @@ Stay classy!
 
 * stuff to be done
 
+** General
+*** DONE Review the packages i did have
+*** TODO Remove all packages and recompile and address any warnings
+*** DONE Check packages into git so I know what is being used
+*** TODO Reinstate any obviously required packages and modes
+*** TODO emacs server
+*** TODO Shove in some of the stuff in the local/custom.el into here
+*** TODO Visual line mode or word wrap configuration?
+*** TODO Timestamps with times by default?
+*** TODO Better search-in-files from emacs?
 
-** TODO Review the packages i did have
-** TODO Remove all packages and recompile and address any warnings
-** TODO Check packages into git so I know what is being used
-** TODO emacs server
-** TODO Shove in some of the stuff in the local/custom.el into here
-** TODO Visual line mode or word wrap configuration?
-** TODO Timestamps with times by default?
+** Questionable packages
+
+*** ack-and-a-half
+    - Note taken on [2014-12-20 Sat 09:35] \\
+      Totally dig ack but need to get a decent search-thu-files workflow in
+      emacs (or just continue to do it cmd line)
+*** backtrace-mode
+*** deft
+*** emoji-display
+*** erlang
+*** evernote-mode
+*** exec-path-from-shell
+*** json-reformat
+*** json-snatcher
+*** n-mode
+*** naked-readmetxt
+*** session
+*** tidy
+*** clojurescript-mode
+    - Note taken on [2014-12-20 Sat 09:34] \\
+      what do I actually need this for given it is just clojure ? Guess figure it out next time I clojurescript
 ** Fixes/ideas
 *** TODO Find a better way of remembering shortcuts !
 *** TODO org timestamp default to minutes and second?
 *** TODO Dumb-ass mode for things I already looked up… a whereis history?
+*** TODO Is there anything I can do to expand org mode when naving thru with git-gutter s-n?

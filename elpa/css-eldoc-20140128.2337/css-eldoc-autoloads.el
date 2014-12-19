@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "css-eldoc" "css-eldoc.el" (21652 37929 0 0))
+;;;### (autoloads nil "css-eldoc" "css-eldoc.el" (21652 44960 0 0))
 ;;; Generated autoloads from css-eldoc.el
 
 (autoload 'css-eldoc-function "css-eldoc" "\
@@ -24,7 +24,7 @@ Disable css-eldoc.
 ;;;***
 
 ;;;### (autoloads nil nil ("css-eldoc-hash-table.el" "css-eldoc-pkg.el")
-;;;;;;  (21652 37929 605039 0))
+;;;;;;  (21652 44960 418072 0))
 
 ;;;***
 

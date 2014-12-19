@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "sauron" "sauron.el" (21652 38047 0 0))
+;;;### (autoloads nil "sauron" "sauron.el" (21652 46260 0 0))
 ;;; Generated autoloads from sauron.el
 
 (autoload 'sauron-start "sauron" "\
@@ -21,7 +21,7 @@ Start sauron, but don't show the window.
 
 ;;;### (autoloads nil nil ("sauron-dbus.el" "sauron-erc.el" "sauron-identica.el"
 ;;;;;;  "sauron-jabber.el" "sauron-notifications.el" "sauron-org.el"
-;;;;;;  "sauron-pkg.el" "sauron-twittering.el") (21652 38047 929888
+;;;;;;  "sauron-pkg.el" "sauron-twittering.el") (21652 46260 435948
 ;;;;;;  0))
 
 ;;;***

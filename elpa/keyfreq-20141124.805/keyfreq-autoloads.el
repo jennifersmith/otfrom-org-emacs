@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "keyfreq" "keyfreq.el" (21652 37863 0 0))
+;;;### (autoloads nil "keyfreq" "keyfreq.el" (21652 44890 0 0))
 ;;; Generated autoloads from keyfreq.el
 
 (defvar keyfreq-mode nil "\
