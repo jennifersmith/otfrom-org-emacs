@@ -339,11 +339,13 @@ NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
    similar things to helm in a number of circumstances and I can still
    use helm for cheatsheets and other things"
 
-   Jen: actually I just removed it full stop, this is more fun
+   Jen: actually I just removed it full stop, this is more fun. But
+   changing where the history is saved
 
    #+BEGIN_SRC emacs-lisp
      (ido-mode 1)
      (setq ido-enable-flex-matching 1)
+     (setq ido-save-directory-list-file "~/.emacs.d/private")
    #+END_SRC
 
 ** window and buffer tweaking

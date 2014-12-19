@@ -1,8 +1,6 @@
 org/*.el
 *~
-bookmarks
-url/*
-/cider-history
-/local/mellon.el.gpg
 /elpa/archives/
 *.elc
+/private/
+/elpa/
