@@ -1277,13 +1277,17 @@ Stay classy!
 
 
 
-* stuff TODO
 
-+ Try and consume some of the amazing productivity pr0n stuff @otfrom has in his config ( specially the agenda stuff)
-+ Review the packages i did have
-+ Remove all packages and recompile and address any warnings
-+ emacs server
+* stuff to be done
 
-Fixes/ideas
-+ org timestamp default to minutes and second?
-+ Dumb-ass mode for things I already looked up… a whereis history?
+
+** TODO Review the packages i did have
+** TODO Remove all packages and recompile and address any warnings
+** TODO Check packages into git so I know what is being used
+** TODO emacs server
+** TODO Shove in some of the stuff in the local/custom.el into here
+
+** Fixes/ideas
+*** TODO Find a better way of remembering shortcuts !
+*** TODO org timestamp default to minutes and second?
+*** TODO Dumb-ass mode for things I already looked up… a whereis history?

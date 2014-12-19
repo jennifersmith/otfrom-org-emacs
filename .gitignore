@@ -4,3 +4,4 @@ org/*.el
 *.elc
 /private/
 /elpa/
+/local/
