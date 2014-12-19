@@ -483,9 +483,10 @@ All from @otfrom
 
      And I want to see the colours I'm using.
 
-     #+BEGIN_SRC emacs-lisp
-       (add-hook 'css-mode-hook 'rainbow-mode)
-     #+END_SRC
+***** TODO This aint working... fixit
+      #+BEGIN_SRC emacs-lisp
+        (add-hook 'css-mode-hook 'rainbow-mode)
+      #+END_SRC
 
 **** eldoc
 
@@ -1348,23 +1349,23 @@ Stay classy!
 
 ** Questionable packages
 
-*** ack-and-a-half
+*** DONE ack-and-a-half
     - Note taken on [2014-12-20 Sat 09:35] \\
       Totally dig ack but need to get a decent search-thu-files workflow in
       emacs (or just continue to do it cmd line)
-*** backtrace-mode
-*** deft
-*** emoji-display
-*** erlang
-*** evernote-mode
-*** exec-path-from-shell
-*** json-reformat
-*** json-snatcher
-*** n-mode
-*** naked-readmetxt
-*** session
-*** tidy
-*** clojurescript-mode
+*** TODO backtrace-mode
+*** TODO deft
+*** TODO emoji-display
+*** TODO erlang
+*** TODO evernote-mode
+*** TODO exec-path-from-shell
+*** TODO json-reformat
+*** TODO json-snatcher
+*** TODO n-mode
+*** TODO naked-readmetxt
+*** TODO session
+*** TODO tidy
+*** DONE clojurescript-mode
     - Note taken on [2014-12-20 Sat 09:34] \\
       what do I actually need this for given it is just clojure ? Guess figure it out next time I clojurescript
 ** Fixes/ideas
