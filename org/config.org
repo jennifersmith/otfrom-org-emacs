@@ -1295,6 +1295,17 @@ R means we can do good things with it.
 (require 'ess-site)
 #+END_SRC
 
+
+** Bash
+
+Have shell-script mode by default, just want to diminish it.... or the
+major-mode equivalent.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'sh-mode-hook
+  (lambda()
+    (setq mode-name "sh-script")))
+#+END_SRC
 ** pastebins
 
    gist, pastebin, refheap. All good ways of sharing snippets of code
@@ -1466,7 +1477,7 @@ Stay classy!
 *** DONE add back the level 2 max level stuff
 *** DONE R stuff?
 
-*** TODO Bash scripting mode?
+*** DONE Bash scripting mode?
 *** TODO remove inline todos and stuff when they are done
 
 *** TODO Add in some more yasnippet stuff for : ruby, R, python, rspec, bash,
