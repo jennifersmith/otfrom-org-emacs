@@ -1393,7 +1393,7 @@ Stay classy!
 *** DONE Review the packages i did have
 *** DONE Check packages into git so I know what is being used
 *** DONE Reinstate any obviously required packages and modes
-*** TODO emacs server
+*** DONE emacs server
 *** TODO Shove in some of the stuff in the local/custom.el into here
 *** TODO Visual line mode or word wrap configuration?
 *** TODO Timestamps with times by default?
