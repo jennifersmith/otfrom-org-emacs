@@ -576,7 +576,14 @@ to include anything in current buffer at level heading 2 or higher.
 ** Additional stuff to be added
 *** DONE csharp-mode
 
-*** TODO dockerfile-mode
+*** DONE dockerfile-mode
+
+I can't remember why I want this, but I have definitely been using
+docker a little bit more these days. I do try and mode all my code :)
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'dockerfile-mode)
+#+END_SRC
+
 *** TODO rspec-mode
 *** TODO ruby-mode
 *** TODO yasnippet-bundle
@@ -1379,6 +1386,7 @@ Stay classy!
 *** DONE add back the level 2 max level stuff
 
 
+*** TODO remove inline todos and stuff when they are done
 ** Questionable packages
 
 *** DONE ack-and-a-half
