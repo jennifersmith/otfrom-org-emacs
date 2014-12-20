@@ -576,18 +576,6 @@ to include anything in current buffer at level heading 2 or higher.
 ** Additional stuff to be added
 *** DONE csharp-mode
 
-*** DONE dockerfile-mode
-
-I can't remember why I want this, but I have definitely been using
-docker a little bit more these days. I do try and mode all my code :)
-#+BEGIN_SRC emacs-lisp
-(maybe-install-and-require 'dockerfile-mode)
-#+END_SRC
-
-*** TODO rspec-mode
-*** TODO ruby-mode
-*** TODO yasnippet-bundle
-
 ** prog-mode
 
    prog-mode and the prog-mode-hook are at the basis of most of the
@@ -670,11 +658,8 @@ Jen: edited to be clojure only previously .. .not sure why.
 
 ** yasnippet
 
-    I had some lovely things in skeleton mode ages ago to write out
-    boilerplate for C++ and to convert some awful, horrible 100
-    parameter PLSQL functions I had to call. yasnippets seems to be
-    the one that people are using now to do smaller things than what
-    I was doing with skeleton. This is probably a good thing.
+I haven't really used yasnippet very much. I am going to bolt in some
+common language snippets and see if that encourages me.
 
     #+BEGIN_SRC emacs-lisp
       (maybe-install-and-require 'yasnippet)
@@ -704,6 +689,7 @@ Jen: edited to be clojure only previously .. .not sure why.
      #+BEGIN_SRC emacs-lisp
        (diminish 'yas-minor-mode)
      #+END_SRC
+
 
 ** smartscan
 
@@ -1238,6 +1224,41 @@ instance is something I try and avoid.
       (maybe-install-and-require 'refheap)
     #+END_SRC
 
+** ruby
+
+Through circumstance, ruby right now is becoming my default. Even
+though I love Clojure, the environement I am in involves a lot of
+scripting. So let's bring on the ruby stuff.
+
+*** DONE rspec-mode
+
+Again not sure what this adds - I recall there is a useful jump/insert
+spec/implementation type command. I guess I can explore next time I am in
+rspec.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'rspec-mode)
+#+END_SRC
+
+*** DONE ruby-mode
+
+I seem to recall this now picks up Rakefile/Gemfile type files
+automatically. Otherwise can customise here.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'ruby-mode)
+#+END_SRC
+
+
+
+** DONE dockerfile-mode
+
+I can't remember why I want this, but I have definitely been using
+docker a little bit more these days. I do try and mode all my code :)
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'dockerfile-mode)
+#+END_SRC
+
 * Data Modes
 
   Some things aren't really text and aren't really source code
@@ -1387,6 +1408,12 @@ Stay classy!
 
 
 *** TODO remove inline todos and stuff when they are done
+*** TODO R stuff?
+
+*** TODO Bash scripting mode?
+
+*** TODO Add in some more yasnippet stuff for : ruby, R, python, rspec, bash,
+
 ** Questionable packages
 
 *** DONE ack-and-a-half
