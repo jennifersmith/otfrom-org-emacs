@@ -562,11 +562,20 @@ ever?). But I am starting to put in a few tweaks here and there.
 
 ** Refile
 
-*** TODO add back the level 2 max level stuff here
+I recently discovered refile. It's pretty cool and I use it a lot (or
+I did in the making of this document anyway. Appreciate being able to
+knock stuff out of the way without messing around and switching
+context. Anyway, this little snippet will set the targets for refile
+to include anything in current buffer at level heading 2 or higher.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets (quote ((nil :maxlevel . 2))))
+#+END_SRC
 
 * Programming Modes
 ** Additional stuff to be added
-*** TODO csharp-mode
+*** DONE csharp-mode
+
 *** TODO dockerfile-mode
 *** TODO rspec-mode
 *** TODO ruby-mode
@@ -1186,6 +1195,19 @@ Jen: edited to be clojure only previously .. .not sure why.
      (add-to-list 'auto-mode-alist '("\\.es$" . es-mode))
    #+END_SRC
 
+** C#
+I cut my teeth on csharp development. It was the first 'modern'
+language I think I learnt (please don't ask me what modern
+means... it's all relative innit). Anyway, recently I have been having
+to read over but thankfully not edit a whole lot of csharp code. I
+value my time and patience so using VisualStudio on a VM or remote
+instance is something I try and avoid.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'csharp-mode)
+#+END_SRC
+
+
 ** pastebins
 
    gist, pastebin, refheap. All good ways of sharing snippets of code
@@ -1354,6 +1376,9 @@ Stay classy!
 *** TODO Get projectile saving somewhere sensible
 
 *** TODO Added back gnu repo - how does that affect a rebuild (was prev trouble with org version)
+*** DONE add back the level 2 max level stuff
+
+
 ** Questionable packages
 
 *** DONE ack-and-a-half
