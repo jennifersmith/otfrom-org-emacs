@@ -483,11 +483,15 @@ All from @otfrom
 
      And I want to see the colours I'm using.
 
-***** TODO This aint working... fixit
+
       #+BEGIN_SRC emacs-lisp
         (add-hook 'css-mode-hook 'rainbow-mode)
       #+END_SRC
-
+***** DONE rainbow-mode not working - fix it
+      - Note taken on [2014-12-20 Sat 11:11] \\
+        Did this by adding elpa.gnu.org to list of packages. Not sure what
+        affect that would have on the org problems i was having before so
+        added todo to check
 **** eldoc
 
      And who doesn't want eldoc tips when they are editing things.
@@ -1347,6 +1351,9 @@ Stay classy!
 *** TODO Timestamps with times by default?
 *** TODO Better search-in-files from emacs?
 
+*** TODO Get projectile saving somewhere sensible
+
+*** TODO Added back gnu repo - how does that affect a rebuild (was prev trouble with org version)
 ** Questionable packages
 
 *** DONE ack-and-a-half
