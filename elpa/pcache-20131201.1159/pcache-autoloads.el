@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil nil ("pcache.el") (21652 44978 158861 0))
+;;;### (autoloads nil nil ("pcache.el") (21653 59162 723508 0))
 
 ;;;***
 

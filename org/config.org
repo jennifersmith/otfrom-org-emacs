@@ -21,6 +21,7 @@
 
    #+END_SRC
 
+
 * OSX modifications /affordances
 
 Apparently the built in `ls` on OSX does not support the --dired switch that seemingly gnu-ls provides. I have installed coreutils via homebrew which gives me access to `gls` so let's use that instead:
@@ -31,6 +32,8 @@ Apparently the built in `ls` on OSX does not support the --dired switch that see
 
 [[http://stackoverflow.com/questions/4076360/error-in-dired-sorting-on-os-x][Related StackOverflow
 ]]
+
+
 * Globals
 
   A set of modes etc. that will be globally loaded.
@@ -126,6 +129,7 @@ Yay... me analytics.
      (server-start)
    #+END_SRC
 
+
 * non-elpa and work arounds
 
 For anything not available from elpa, a non-elpa directory! Currently not in use at the moment, but good to keep around.
@@ -141,6 +145,7 @@ For anything not available from elpa, a non-elpa directory! Currently not in use
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'load-path (concat user-emacs-directory "non-elpa/"))
    #+END_SRC
+
 
 * Macintosh Specific Setup
 
@@ -1245,30 +1250,6 @@ instance is something I try and avoid.
 (maybe-install-and-require 'csharp-mode)
 #+END_SRC
 
-
-** pastebins
-
-   gist, pastebin, refheap. All good ways of sharing snippets of code
-   with people on irc or similar.
-
-*** gist
-
-    As you probably already have a github account, having gist as a
-    way of sharing code snippets is a good idea.
-
-    #+BEGIN_SRC emacs-lisp
-      (maybe-install-and-require 'gist)
-    #+END_SRC
-
-*** refheap
-
-    I like [[http://refheap.com][refheap]] and Anthony Grimes seems like a nice guy. And it
-    is built in clojure.
-
-    #+BEGIN_SRC emacs-lisp
-      (maybe-install-and-require 'refheap)
-    #+END_SRC
-
 ** ruby
 
 Through circumstance, ruby right now is becoming my default. Even
@@ -1294,8 +1275,6 @@ automatically. Otherwise can customise here.
 (maybe-install-and-require 'ruby-mode)
 #+END_SRC
 
-
-
 ** DONE dockerfile-mode
 
 I can't remember why I want this, but I have definitely been using
@@ -1303,6 +1282,42 @@ docker a little bit more these days. I do try and mode all my code :)
 #+BEGIN_SRC emacs-lisp
 (maybe-install-and-require 'dockerfile-mode)
 #+END_SRC
+
+
+** R
+
+Oh yeah... I totally does the DataSciences. Or maybe I use R as a less
+crap replacement for Excel. You decide. Either way, the repl-yness of
+R means we can do good things with it.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'ess)
+(require 'ess-site)
+#+END_SRC
+
+** pastebins
+
+   gist, pastebin, refheap. All good ways of sharing snippets of code
+   with people on irc or similar.
+
+*** gist
+
+    As you probably already have a github account, having gist as a
+    way of sharing code snippets is a good idea.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'gist)
+    #+END_SRC
+
+*** refheap
+
+    I like [[http://refheap.com][refheap]] and Anthony Grimes seems like a nice guy. And it
+    is built in clojure.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'refheap)
+    #+END_SRC
+
 
 * Data Modes
 
@@ -1368,7 +1383,9 @@ that.
      (load-if-exists custom-file)
    #+END_SRC
 
+
 * Finishing
+
 
 * Misc stuffs
 
@@ -1438,16 +1455,19 @@ Stay classy!
       the 'current directory' (or the 'current project' if that is soenthing
       projectile can do)
 
-*** TODO Get projectile saving somewhere sensible
+*** DONE Get projectile saving somewhere sensible
 
-*** TODO Added back gnu repo - how does that affect a rebuild (was prev trouble with org version)
+*** DONE Added back gnu repo - how does that affect a rebuild (was prev trouble with org version)
+    - Note taken on [2014-12-21 Sun 08:16] \\
+      Would seem that rebuilding packages as of today with gnu elpa/org elpa
+      and wahtever else I have configured appears not to break org-mode. An
+      earlier configuration seemed to result in a broken org mode and I
+      never figured out why. Need to keep an eye on this.
 *** DONE add back the level 2 max level stuff
-
-
-*** TODO remove inline todos and stuff when they are done
-*** TODO R stuff?
+*** DONE R stuff?
 
 *** TODO Bash scripting mode?
+*** TODO remove inline todos and stuff when they are done
 
 *** TODO Add in some more yasnippet stuff for : ruby, R, python, rspec, bash,
 
