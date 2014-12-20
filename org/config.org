@@ -433,6 +433,34 @@ Jen: These may conflict with orgmode stuff...
      (diminish 'projectile-mode)
    #+END_SRC
 
+   I want to be able to save projectile stuff to a 'private'
+   directory... so I don't wind up checking in
+   '/jen/supersecretproject/' into github :).
+#+BEGIN_SRC emacs-lisp
+
+(setq projectile-cache-file "/Users/jensmith/.emacs.d/private/projectile.cache")
+(setq projectile-known-projects-file "/Users/jensmith/.emacs.d/private/projectile-bookmarks.eld")
+
+#+END_SRC
+
+** Search
+I do a lot of 'code archaeology' which is a fancy way of saying 'I use
+ack a lot'. I am used to using it from shell but it would be nice to
+use ack:
+#+BEGIN_SRC emacs-lisp
+
+(maybe-install-and-require 'ack-and-a-half)
+
+#+END_SRC
+
+Projectile plays nicely with this... I don't have to think about it
+too much as it tends to pick the 'right' directory to search in.
+
+Will I be able to remember to use 'projectile ack'? Or remember ctrl-c
+p s a .... probably not but will do for now.
+
+
+
 * Text Modes
 All from @otfrom
 
@@ -586,6 +614,8 @@ to include anything in current buffer at level heading 2 or higher.
 #+BEGIN_SRC emacs-lisp
 (setq org-refile-targets (quote ((nil :maxlevel . 2))))
 #+END_SRC
+
+
 
 * Programming Modes
 ** Additional stuff to be added
@@ -1394,10 +1424,19 @@ Stay classy!
 *** DONE Check packages into git so I know what is being used
 *** DONE Reinstate any obviously required packages and modes
 *** DONE emacs server
-*** TODO Shove in some of the stuff in the local/custom.el into here
-*** TODO Visual line mode or word wrap configuration?
-*** TODO Timestamps with times by default?
-*** TODO Better search-in-files from emacs?
+*** DONE Shove in some of the stuff in the local/custom.el into here
+*** DONE Visual line mode or word wrap configuration?
+*** DONE Timestamps with times by default?
+    - Note taken on [2014-12-20 Sat 14:54] \\
+      I didn't spend a hundred years looking, but seems as if we don't get
+      to insert a time with the date by default. Oh Well . Guess had better
+      mem keystroke!
+*** DONE Better search-in-files from emacs?
+    - Note taken on [2014-12-21 Sun 07:53] \\
+      What I want here is something that lets me do 'code archaology'. as in
+      specify a search string, get some nicely presented results. Default to
+      the 'current directory' (or the 'current project' if that is soenthing
+      projectile can do)
 
 *** TODO Get projectile saving somewhere sensible
 
@@ -1448,3 +1487,4 @@ Stay classy!
 *** TODO org timestamp default to minutes and second?
 *** TODO Dumb-ass mode for things I already looked up… a whereis history?
 *** TODO Is there anything I can do to expand org mode when naving thru with git-gutter s-n?
+*** TODO Helm fuzzy match?
