@@ -111,6 +111,21 @@ Yay... me analytics.
 (keyfreq-autosave-mode 1)
 #+END_SRC
 
+
+** emacs-server
+
+   Emacs startup time isn't nearly as much of a problem as it used to
+   be. I'm also pretty patient as I've been working with JVM startup
+   times over the years.
+
+   However, it is still nice to be able to attach to a running Emacs
+   process when we want to. To that end, let's start up an
+   emacs-server.
+
+   #+BEGIN_SRC emacs-lisp
+     (server-start)
+   #+END_SRC
+
 * non-elpa and work arounds
 
 For anything not available from elpa, a non-elpa directory! Currently not in use at the moment, but good to keep around.
@@ -1268,13 +1283,11 @@ docker a little bit more these days. I do try and mode all my code :)
 
    Lots of great things for sorting, unsorting, munging and editing
    csv files.
-*** TODO Last run couldnt find csv-mode
 
-   #+DONTBEGIN_SRC emacs-lisp
+
+   #+BEGIN_SRC emacs-lisp
      (maybe-install-and-require 'csv-mode)
-   #+DONTEND_SRC
-
-
+   #+END_SRC
 
 ** graphviz-dot-mode
 
@@ -1327,20 +1340,6 @@ that.
 
 * Finishing
 
-** emacs-server
-
-   Emacs startup time isn't nearly as much of a problem as it used to
-   be. I'm also pretty patient as I've been working with JVM startup
-   times over the years.
-
-   However, it is still nice to be able to attach to a running Emacs
-   process when we want to. To that end, let's start up an
-   emacs-server.
-
-   #+DONT_BEGIN_SRC emacs-lisp
-     (server-start)
-   #+DONT_END_SRC
-
 * Misc stuffs
 
 Thankfully empty
@@ -1392,9 +1391,8 @@ Stay classy!
 
 ** General
 *** DONE Review the packages i did have
-*** TODO Remove all packages and recompile and address any warnings
 *** DONE Check packages into git so I know what is being used
-*** TODO Reinstate any obviously required packages and modes
+*** DONE Reinstate any obviously required packages and modes
 *** TODO emacs server
 *** TODO Shove in some of the stuff in the local/custom.el into here
 *** TODO Visual line mode or word wrap configuration?
@@ -1413,6 +1411,16 @@ Stay classy!
 *** TODO Bash scripting mode?
 
 *** TODO Add in some more yasnippet stuff for : ruby, R, python, rspec, bash,
+
+*** TODO Remove all packages and recompile and address any warnings
+
+*** DONE Last run couldnt find csv-mode
+    - Note taken on [2014-12-20 Sat 11:35] \\
+      Again fixed by using gnu elpa
+
+
+
+
 
 ** Questionable packages
 
