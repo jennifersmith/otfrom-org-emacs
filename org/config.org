@@ -724,15 +724,15 @@ common language snippets and see if that encourages me.
        (setq yas/root-directory (concat user-emacs-directory "snippets"))
      #+END_SRC
 
-**** Turn it on globally
+*** Turn it on globally
 
-     And we want to add yasnippets to all modes where we have snippets.
+    And we want to add yasnippets to all modes where we have snippets.
 
-     #+BEGIN_SRC emacs-lisp
-       (yas-global-mode 1)
-     #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+      (yas-global-mode 1)
+    #+END_SRC
 
-**** Diminish it
+*** Diminish it
 
      I don't need to see it everywhere though.
 
@@ -740,6 +740,16 @@ common language snippets and see if that encourages me.
        (diminish 'yas-minor-mode)
      #+END_SRC
 
+*** Add some useful snippets
+
+A few packages out there for languages I should think about including:
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'clojure-snippets)
+
+#+END_SRC
+
+Well... ok just one right now.
 
 ** smartscan
 
@@ -1491,7 +1501,7 @@ Stay classy!
 
 
 
-
+*** TODO Proper bash running thing with ALTERNATE_EDITOR and devnull by default
 ** Questionable packages
 
 *** DONE ack-and-a-half
