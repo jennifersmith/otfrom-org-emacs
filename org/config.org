@@ -646,7 +646,16 @@ higher. Also adds in the ability to create new parent nodes too when refiling.
 (setq org-refile-allow-creating-parent-nodes t)
 #+END_SRC
 
+** Logging
 
+Log it all (with a draw for notes)
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-log-into-drawer t)
+(setq org-log-done 'time)
+
+#+END_SRC
 
 * Programming Modes
 ** Additional stuff to be added
