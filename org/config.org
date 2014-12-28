@@ -471,7 +471,7 @@ p s a .... probably not but will do for now.
 
 
 * Text Modes
-All from @otfrom
+All from @otfrom - well apart from what i added ;)
 
 ** Text Mode Basics
 
@@ -605,6 +605,26 @@ number of words that I haven't saved yet!
 #+BEGIN_SRC emacs-lisp
 (setq wc-modeline-format "[%tw(%w)w]")
 #+END_SRC
+
+
+** dutton-mode (nascent... it's not really a mode yet)
+
+This is available everywhere for now... basically calls a php server
+which someone has used to implement a translator (so I have to have
+that started). So bare bones
+
+*** TODO Make this as awesome as it could be
+
+#+BEGIN_SRC emacs-lisp
+(require 'dutton)
+(global-set-key (kbd "C-c d") 'rapmotz-insert-translation)
+#+END_SRC
+
+[[http://stackoverflow.com/questions/25188206/how-do-you-write-an-emacs-lisp-function-to-replace-a-word-at-point][stackoverflow]]
+
+
+nu j p cheat o ji speedwords !
+
 
 
 * Org mode
