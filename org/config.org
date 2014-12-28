@@ -638,10 +638,12 @@ I recently discovered refile. It's pretty cool and I use it a lot (or
 I did in the making of this document anyway. Appreciate being able to
 knock stuff out of the way without messing around and switching
 context. Anyway, this little snippet will set the targets for refile
-to include anything in current buffer at level heading 2 or higher.
+to include anything in current buffer at level heading 2 or
+higher. Also adds in the ability to create new parent nodes too when refiling.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-refile-targets (quote ((nil :maxlevel . 2))))
+(setq org-refile-allow-creating-parent-nodes t)
 #+END_SRC
 
 
