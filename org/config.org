@@ -81,6 +81,8 @@ Throw temporary files into a ~/.saves/ directory. I am a complete nerd so I am u
      version-control t)
    #+END_SRC
 
+**** TODO This appears to be not working how can i fix?
+
 *** Bookmarks
 
 These I seem to use by accident by keyboard stabbing. I could disable
@@ -1504,6 +1506,16 @@ Stay classy!
 
 
 *** TODO Proper bash running thing with ALTERNATE_EDITOR and devnull by default
+
+
+*** TODO flycheck by default
+
+understand wf better on flycheck
+
+missing json stuff sometimes from flycheck… puzzling (path issue?)
+
+git@github.com:gary/yasnippets-rspec.git for rpsce snipopets
+
 ** Questionable packages
 
 *** DONE ack-and-a-half
@@ -1527,7 +1539,7 @@ Stay classy!
       what do I actually need this for given it is just clojure ? Guess figure it out next time I clojurescript
 ** Fixes/ideas
 *** TODO Find a better way of remembering shortcuts !
-*** TODO org timestamp default to minutes and second?
+*** TODO org timestamp default to minutes and second? - I can do this maybe by mapping a shortcut
 *** TODO Dumb-ass mode for things I already looked up… a whereis history?
 *** TODO Is there anything I can do to expand org mode when naving thru with git-gutter s-n?
 *** TODO Helm fuzzy match?
