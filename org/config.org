@@ -21,7 +21,6 @@
 
    #+END_SRC
 
-
 * OSX modifications /affordances
 
 Apparently the built in `ls` on OSX does not support the --dired switch that seemingly gnu-ls provides. I have installed coreutils via homebrew which gives me access to `gls` so let's use that instead:
@@ -81,8 +80,6 @@ Throw temporary files into a ~/.saves/ directory. I am a complete nerd so I am u
      version-control t)
    #+END_SRC
 
-**** TODO This appears to be not working how can i fix?
-
 *** Bookmarks
 
 These I seem to use by accident by keyboard stabbing. I could disable
@@ -130,7 +127,6 @@ Yay... me analytics.
    #+BEGIN_SRC emacs-lisp
      (server-start)
    #+END_SRC
-
 
 * non-elpa and work arounds
 
@@ -613,7 +609,7 @@ This is available everywhere for now... basically calls a php server
 which someone has used to implement a translator (so I have to have
 that started). So bare bones
 
-*** TODO Make this as awesome as it could be
+
 
 #+BEGIN_SRC emacs-lisp
 (require 'dutton)
@@ -624,8 +620,6 @@ that started). So bare bones
 
 
 nu j p cheat o ji speedwords !
-
-
 
 * Org mode
 
@@ -642,7 +636,9 @@ to include anything in current buffer at level heading 2 or
 higher. Also adds in the ability to create new parent nodes too when refiling.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets (quote ((nil :maxlevel . 2))))
+(setq org-refile-targets (quote (
+                                  (org-agenda-files :maxlevel . 2)
+                                  (nil :maxlevel . 2)) ))
 (setq org-refile-allow-creating-parent-nodes t)
 #+END_SRC
 
@@ -1490,87 +1486,19 @@ Stay classy!
 
 
 
-* stuff to be done
+* Questionable packages
 
-** General
-*** DONE Review the packages i did have
-*** DONE Check packages into git so I know what is being used
-*** DONE Reinstate any obviously required packages and modes
-*** DONE emacs server
-*** DONE Shove in some of the stuff in the local/custom.el into here
-*** DONE Visual line mode or word wrap configuration?
-*** DONE Timestamps with times by default?
-    - Note taken on [2014-12-20 Sat 14:54] \\
-      I didn't spend a hundred years looking, but seems as if we don't get
-      to insert a time with the date by default. Oh Well . Guess had better
-      mem keystroke!
-*** DONE Better search-in-files from emacs?
-    - Note taken on [2014-12-21 Sun 07:53] \\
-      What I want here is something that lets me do 'code archaology'. as in
-      specify a search string, get some nicely presented results. Default to
-      the 'current directory' (or the 'current project' if that is soenthing
-      projectile can do)
+  Some stuff that I had before that I don't know if I need
 
-*** DONE Get projectile saving somewhere sensible
-
-*** DONE Added back gnu repo - how does that affect a rebuild (was prev trouble with org version)
-    - Note taken on [2014-12-21 Sun 08:16] \\
-      Would seem that rebuilding packages as of today with gnu elpa/org elpa
-      and wahtever else I have configured appears not to break org-mode. An
-      earlier configuration seemed to result in a broken org mode and I
-      never figured out why. Need to keep an eye on this.
-*** DONE add back the level 2 max level stuff
-*** DONE R stuff?
-
-*** DONE Bash scripting mode?
-*** TODO remove inline todos and stuff when they are done
-
-*** TODO Add in some more yasnippet stuff for : ruby, R, python, rspec, bash,
-
-*** TODO Remove all packages and recompile and address any warnings
-
-*** DONE Last run couldnt find csv-mode
-    - Note taken on [2014-12-20 Sat 11:35] \\
-      Again fixed by using gnu elpa
-
-
-
-
-*** TODO Proper bash running thing with ALTERNATE_EDITOR and devnull by default
-
-
-*** TODO flycheck by default
-
-understand wf better on flycheck
-
-missing json stuff sometimes from flycheck… puzzling (path issue?)
-
-git@github.com:gary/yasnippets-rspec.git for rpsce snipopets
-
-** Questionable packages
-
-*** DONE ack-and-a-half
-    - Note taken on [2014-12-20 Sat 09:35] \\
-      Totally dig ack but need to get a decent search-thu-files workflow in
-      emacs (or just continue to do it cmd line)
-*** TODO backtrace-mode
-*** TODO deft
-*** TODO emoji-display
-*** TODO erlang
-*** TODO evernote-mode
-*** TODO exec-path-from-shell
-*** TODO json-reformat
-*** TODO json-snatcher
-*** TODO n-mode
-*** TODO naked-readmetxt
-*** TODO session
-*** TODO tidy
-*** DONE clojurescript-mode
-    - Note taken on [2014-12-20 Sat 09:34] \\
-      what do I actually need this for given it is just clojure ? Guess figure it out next time I clojurescript
-** Fixes/ideas
-*** TODO Find a better way of remembering shortcuts !
-*** TODO org timestamp default to minutes and second? - I can do this maybe by mapping a shortcut
-*** TODO Dumb-ass mode for things I already looked up… a whereis history?
-*** TODO Is there anything I can do to expand org mode when naving thru with git-gutter s-n?
-*** TODO Helm fuzzy match?
+** package backtrace-mode
+** package deft
+** package emoji-display
+** package erlang
+** package evernote-mode
+** package exec-path-from-shell
+** package json-reformat
+** package json-snatcher
+** package n-mode
+** package naked-readmetxt
+** package session
+** package tidy
