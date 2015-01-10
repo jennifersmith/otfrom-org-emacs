@@ -21,6 +21,7 @@
 
    #+END_SRC
 
+
 * OSX modifications /affordances
 
 Apparently the built in `ls` on OSX does not support the --dired switch that seemingly gnu-ls provides. I have installed coreutils via homebrew which gives me access to `gls` so let's use that instead:
@@ -127,6 +128,7 @@ Yay... me analytics.
    #+BEGIN_SRC emacs-lisp
      (server-start)
    #+END_SRC
+
 
 * non-elpa and work arounds
 
