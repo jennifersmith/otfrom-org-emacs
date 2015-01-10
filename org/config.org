@@ -614,6 +614,7 @@ that started). So bare bones
 
 
 #+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'requiest)
 (require 'dutton)
 (global-set-key (kbd "C-c d") 'rapmotz-insert-translation)
 #+END_SRC
@@ -623,11 +624,20 @@ that started). So bare bones
 
 nu j p cheat o ji speedwords !
 
+
 * Org mode
 
 I am not as sophisticated as @otfrom in my use of orgmode (yet,
 ever?). But I am starting to put in a few tweaks here and there.
 
+Firstly is to go full-cream with latest orgmode (hopefully will pick
+up the one from the org elpa?).
+
+#+BEGIN_SRC emacs-lisp
+
+(maybe-install-and-require 'org)
+
+#+END_SRC
 ** org-agenda
 
 It's only been a week and I have only scratched surface of what I can
