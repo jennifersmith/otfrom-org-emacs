@@ -614,7 +614,7 @@ that started). So bare bones
 
 
 #+BEGIN_SRC emacs-lisp
-(maybe-install-and-require 'requiest)
+(maybe-install-and-require 'request)
 (require 'dutton)
 (global-set-key (kbd "C-c d") 'rapmotz-insert-translation)
 #+END_SRC
@@ -747,9 +747,6 @@ getting things done.
 
 
 * Programming Modes
-** Additional stuff to be added
-*** DONE csharp-mode
-
 ** prog-mode
 
    prog-mode and the prog-mode-hook are at the basis of most of the
@@ -817,6 +814,20 @@ Jen: edited to be clojure only previously .. .not sure why.
       (maybe-install-and-require 'highlight-symbol)
       (add-hook 'prog-mode-hook 'highlight-symbol-mode)
     #+END_SRC
+
+*** Flycheck mode
+
+This is a pretty handy syntax checker - you have to make sure the
+relevant syntax checker for the current major mode is installed but
+it's nice and obvious from flycheck-verify-setup what you need. I
+mainly use for json right now but will enable it on all prog modes (diminised).
+
+#+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'flycheck)
+      (add-hook 'prog-mode-hook 'flycheck-mode)
+      (diminish 'flycheck-mode)
+
+#+END_SRC
 
 ** color-identifiers-mode
 
