@@ -626,7 +626,42 @@ nu j p cheat o ji speedwords !
 I am not as sophisticated as @otfrom in my use of orgmode (yet,
 ever?). But I am starting to put in a few tweaks here and there.
 
-** Refile
+** org-agenda
+
+It's only been a week and I have only scratched surface of what I can
+do with orgmode, but it's becoming indispensable. Particularly
+org-agenda.
+
+Anyway, I have all my relevant 'agenda' files in ~/Dropbox/gtd
+... actually if something in there is not a relevant agenda file then
+it shouldn't be in the folder!
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-agenda-files (file-expand-wildcards "~/Dropbox/gtd/*.org"))
+
+
+#+END_SRC
+
+Start the week on whatever day I am looking at.
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-start-on-weekday nil)
+
+#+END_SRC
+
+** org-mobile
+
+Started using org-mobile to bring some level of ahem mobility to my
+org agenda stuff. Early days, but so far, so good.
+
+#+BEGIN_SRC  emacs-lisp
+
+(setq org-id-locations-file "~/.emacs.d/private/.org-id-locations")
+(setq org-mobile-directory "~/Dropbox/gtd/mobileorg")
+(setq org-mobile-inbox-for-pull "~/Dropbox/gtd/from-mobileorg")
+
+#+END_SRC
+** org-refile
 
 I recently discovered refile. It's pretty cool and I use it a lot (or
 I did in the making of this document anyway. Appreciate being able to
@@ -642,6 +677,26 @@ higher. Also adds in the ability to create new parent nodes too when refiling.
 (setq org-refile-allow-creating-parent-nodes t)
 #+END_SRC
 
+** org-stuck-projects
+
+This is quite a useful agenda view that allows you to see what
+'projects' (in gtd sense I guess) don't have any actions associated
+with them.
+
+What I have as 'projects' are level 2 and tagged project right
+now. Also being 'unstuck' means having a task under them that is
+either todo/waiting/appt (appointment).
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-stuck-projects
+   (quote
+    ("project+LEVEL=2"
+     ("TODO" "WAITING" "APPT")
+     nil "")))
+
+#+END_SRC
+
 ** Logging
 
 Log it all (with a draw for notes)
@@ -654,7 +709,7 @@ Log it all (with a draw for notes)
 #+END_SRC
 
 
-** Org-capture
+** org-capture
 
 Borrowed from [[http://doc.norang.ca/org-mode.html][here]]. This sets the default notes file for capture to
 something suitable useful. Also binds it to a custom key that I am now
