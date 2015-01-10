@@ -1420,7 +1420,7 @@ automatically. Otherwise can customise here.
 (maybe-install-and-require 'ruby-mode)
 #+END_SRC
 
-** DONE dockerfile-mode
+** dockerfile-mode
 
 I can't remember why I want this, but I have definitely been using
 docker a little bit more these days. I do try and mode all my code :)
@@ -1428,6 +1428,14 @@ docker a little bit more these days. I do try and mode all my code :)
 (maybe-install-and-require 'dockerfile-mode)
 #+END_SRC
 
+** php
+
+Icky but if you are going to have to gawp at php, you might as well do
+it in style.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'php-mode)
+#+END_SRC
 
 ** R
 
@@ -1510,6 +1518,9 @@ keeping around. Will see :)
 #+BEGIN_SRC emacs-lisp
  (maybe-install-and-require 'json-snatcher)
 #+END_SRC
+
+I seem to edit too much json for my liking. Would like to get code
+folding working eventually too.
 * Notification Systems
 
 ** The great eye of Sauron
