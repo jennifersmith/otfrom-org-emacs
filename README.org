@@ -29,3 +29,5 @@ installing stuff. I think that's fine to do but I wanna check the
 elpa/ directory occasionally to understand what has been added. Shame
 that the version numbers make that a little hard to do by comparing
 git history (helm is still installed... even if it is updated).
+
+** Step three: Org mode on craziness [2015-01-10 Sat 22:03]

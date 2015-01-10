@@ -3,5 +3,4 @@ org/*.el
 /elpa/archives/
 *.elc
 /private/
-/elpa/
 /local/
