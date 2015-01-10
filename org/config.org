@@ -1528,3 +1528,15 @@ Stay classy!
 ** package naked-readmetxt
 ** package session
 ** package tidy
+
+* Questionable things
+
+These are commented out (essentially) customizations from my local
+custom.el file that I am not sure why I set. If I need them... this is
+where they are.
+
+#+BEGIN_SRC not-anything
+(custom-set-variables
+ '(helm-M-x-fuzzy-match 1)
+ '(helm-match-plugin-mode t nil (helm-match-plugin)))
+#+END_SRC
