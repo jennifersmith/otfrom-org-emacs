@@ -1502,6 +1502,14 @@ that.
 #+END_SRC
 
 
+** json
+
+I have installed this but never used it... wondering if it is worth
+keeping around. Will see :)
+
+#+BEGIN_SRC emacs-lisp
+ (maybe-install-and-require 'json-snatcher)
+#+END_SRC
 * Notification Systems
 
 ** The great eye of Sauron
@@ -1594,18 +1602,12 @@ Stay classy!
 
   Some stuff that I had before that I don't know if I need
 
-** package backtrace-mode
-** package deft
 ** package emoji-display
-** package erlang
-** package evernote-mode
-** package exec-path-from-shell
-** package json-reformat
 ** package json-snatcher
 ** package n-mode
-** package naked-readmetxt
 ** package session
-** package tidy
+
+
 
 * Questionable things
 
