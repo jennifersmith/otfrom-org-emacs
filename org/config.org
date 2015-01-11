@@ -1424,14 +1424,6 @@ docker a little bit more these days. I do try and mode all my code :)
 (maybe-install-and-require 'dockerfile-mode)
 #+END_SRC
 
-** php
-
-Icky but if you are going to have to gawp at php, you might as well do
-it in style.
-
-#+BEGIN_SRC emacs-lisp
-(maybe-install-and-require 'php-mode)
-#+END_SRC
 
 ** R
 
