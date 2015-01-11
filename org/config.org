@@ -378,7 +378,7 @@ NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
    #+BEGIN_SRC emacs-lisp
      (ido-mode 1)
      (setq ido-enable-flex-matching 1)
-     (setq ido-save-directory-list-file "~/.emacs.d/private")
+     (setq ido-save-directory-list-file "~/.emacs.d/private/ido")
    #+END_SRC
 
 ** window and buffer tweaking
@@ -452,19 +452,15 @@ Jen: These may conflict with orgmode stuff...
 
 ** Search
 I do a lot of 'code archaeology' which is a fancy way of saying 'I use
-ack a lot'. I am used to using it from shell but it would be nice to
-use ack:
+ack a lot'.
+
+So ack-and-a-half is not supported any more, and projectile appears to suggest using ag is better. I am all for trying new things ( [[https://github.com/ggreer/the_silver_searcher][ag gh]] - quote "The command name is 33% shorter than ack, and all keys are on the home row!").
+
 #+BEGIN_SRC emacs-lisp
-
-(maybe-install-and-require 'ack-and-a-half)
-
+(maybe-install-and-require 'ag)
 #+END_SRC
 
-Projectile plays nicely with this... I don't have to think about it
-too much as it tends to pick the 'right' directory to search in.
-
-Will I be able to remember to use 'projectile ack'? Or remember ctrl-c
-p s a .... probably not but will do for now.
+Will I be able to remember to use 'projectile ag'??
 
 
 
