@@ -491,6 +491,7 @@ All from @otfrom - well apart from what i added ;)
                   (delete-trailing-whitespace)))
     #+END_SRC
 
+
 ** html, sgml, xml
 
 *** tagedit
@@ -648,7 +649,6 @@ it shouldn't be in the folder!
 
 (setq org-agenda-files (file-expand-wildcards "~/Dropbox/gtd/*.org"))
 
-
 #+END_SRC
 
 Start the week on whatever day I am looking at.
@@ -667,7 +667,7 @@ org agenda stuff. Early days, but so far, so good.
 (setq org-id-locations-file "~/.emacs.d/private/.org-id-locations")
 (setq org-mobile-directory "~/Dropbox/gtd/mobileorg")
 (setq org-mobile-inbox-for-pull "~/Dropbox/gtd/from-mobileorg")
-
+(setq org-directory "~/Dropbox/gtd")
 #+END_SRC
 ** org-refile
 
@@ -675,12 +675,12 @@ I recently discovered refile. It's pretty cool and I use it a lot (or
 I did in the making of this document anyway. Appreciate being able to
 knock stuff out of the way without messing around and switching
 context. Anyway, this little snippet will set the targets for refile
-to include anything in current buffer at level heading 2 or
+to include anything in current buffer at level heading 3 or
 higher. Also adds in the ability to create new parent nodes too when refiling.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-refile-targets (quote (
-                                  (org-agenda-files :maxlevel . 2)
+                                  (org-agenda-files :maxlevel . 3)
                                   (nil :maxlevel . 2)) ))
 (setq org-refile-allow-creating-parent-nodes t)
 #+END_SRC
@@ -742,6 +742,62 @@ getting things done.
 #+END_SRC
 
 
+** org-journal
+
+Not really got my self into using this, but I have it set up to send
+stuff to DB:
+#+BEGIN_SRC emacs-lisp
+(setq org-journal-dir "~/Dropbox/orgjournal/")
+#+END_SRC
+
+
+** org-icalendar
+Sort of publish it - will do on save later
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-icalendar-after-save-hook (lambda (file)  (copy-file file (concat "~/Sites/"  (file-relative-name file "~/" )))))
+
+#+END_SRC
+
+** tags
+
+Tags can inherit from their parents - good for lazy people.
+#+BEGIN_SRC emacs-lisp
+(setq org-use-tag-inheritance t)
+#+END_SRC
+From [[http://stackoverflow.com/questions/24330980/enumerate-all-tags-in-org-mode][stackoverflow]] - not put anywhere useful yet but good to have around
+
+#+BEGIN_SRC emacs-lisp
+
+(defun get-tag-counts ()
+  (interactive)
+  (let ((all-tags '()))
+    (org-map-entries
+     (lambda ()
+       (let ((tag-string (car (last (org-heading-components)))))
+     (when tag-string
+       (setq all-tags
+         (append all-tags (split-string tag-string ":" t)))))))
+
+
+    ;; now get counts
+(message "RESULT: "
+    (loop for tag in (-uniq all-tags)
+      collect (cons tag (cl-count tag all-tags :test 'string=))))))
+
+
+#+END_SRC
+** org-attach
+
+I like using org attach to manage files . This sets up the cutoff
+before we use git annex for attachments and the default method to move:
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-attach-git-annex-cutoff 10000)
+(setq org-attach-method (quote mv))
+
+#+END_SRC
+
 * Programming Modes
 ** prog-mode
 
@@ -756,25 +812,6 @@ getting things done.
 
     #+BEGIN_SRC emacs-lisp
        (show-paren-mode +1)
-     #+END_SRC
-
-**** paredit-mode
-
-     Should I move over to smartparens? Can anyone tell me what is so
-     much better about it?
-
-     paredit-mode is a strange one. When you first use it, you will
-     hate it. You'll hate the way it won't let you do the things
-     you *think* you want to do. Once you get used to it though you
-     wonder how you ever did any programming without it.
-
-Jen: edited to be clojure only previously .. .not sure why.
-
-
- #+BEGIN_SRC emacs-lisp
-       (maybe-install-and-require 'paredit)
-       (diminish 'paredit-mode "()")
-       (add-hook 'prog-mode-hook 'paredit-mode)
      #+END_SRC
 
 *** rainbow-delimiters
@@ -798,7 +835,14 @@ Jen: edited to be clojure only previously .. .not sure why.
       (add-hook 'prog-mode-hook 'rainbow-mode)
       (diminish 'rainbow-mode)
     #+END_SRC
+*** whitespcae-mode
 
+Show whitespace
+
+#+BEGIN_SRC emacs-lisp
+      (add-hook 'prog-mode-hook 'whitespace-mode)
+
+#+END_SRC
 *** highlight-symbol
 
     I like to see all of the places I'm using the same symbol. This is
@@ -912,6 +956,23 @@ Well... ok just one right now.
                                (define-key paredit-mode-map
                                  (kbd "}") 'paredit-close-curly)))
     #+END_SRC
+
+**** paredit-mode
+
+     paredit-mode is a strange one. When you first use it, you will
+     hate it. You'll hate the way it won't let you do the things
+     you *think* you want to do. Once you get used to it though you
+     wonder how you ever did any programming without it.
+
+     After suffering with paredit enabled ruby buffers for too long I
+     have moved this into the lispmodehooks :)
+
+ #+BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'paredit)
+       (diminish 'paredit-mode "()")
+       (add-hook 'lisp-hooks 'paredit-mode)
+     #+END_SRC
+
 
 *** emacs-lisp
 
