@@ -657,6 +657,26 @@ Start the week on whatever day I am looking at.
 
 #+END_SRC
 
+Mark stuff as 'seen' - a way of keeping track how long stuff stays
+around for
+
+#+BEGIN_SRC emacs-lisp
+
+ (defun mark-as-seen ()
+                 (interactive "P")
+                 (let* ((marker (or (org-get-at-bol 'org-hd-marker)
+                                    (org-agenda-error)))
+                        (buffer (marker-buffer marker)))
+                   (with-current-buffer buffer
+                     (save-excursion
+                       (save-restriction
+                         (widen)
+                         (goto-char marker)
+                         (org-back-to-heading t)
+                         (org-set-property "LAST_SEEN" (format-time-string "[%Y-%m-%d]")))))))
+
+
+#+END_SRC
 ** org-mobile
 
 Started using org-mobile to bring some level of ahem mobility to my
