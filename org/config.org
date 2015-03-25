@@ -677,6 +677,122 @@ around for
 
 
 #+END_SRC
+*** Get all tags
+#+BEGIN_SRC emacs-lisp
+
+
+(defun all-tags ()
+
+  (mapconcat 'identity
+             (mapcar (lambda (x) (setq res (tag-count x)) (if (not (string-match ": 0" res)) res))
+             (sort (mapcar
+                    (lambda (tag)
+                      (substring-no-properties (car tag)))
+                    (org-global-tags-completion-table))
+                   'string<))
+             "\n"))
+
+#+END_SRC
+*** Random todo
+From [[https://gist.github.com/tonyday567/4343164][gist]]
+#+BEGIN_SRC emacs-lisp
+
+
+(defun org-random-entry (&optional arg)
+    "Select and goto a random todo item from the global agenda"
+    (interactive "P")
+    (if org-agenda-overriding-arguments
+        (setq arg org-agenda-overriding-arguments))
+    (if (and (stringp arg) (not (string-match "\\S-" arg))) (setq arg nil))
+    (let* ((today (org-today))
+           (date (calendar-gregorian-from-absolute today))
+           (kwds org-todo-keywords-for-agenda)
+           (lucky-entry nil)
+           (completion-ignore-case t)
+           (org-agenda-buffer (when (buffer-live-p org-agenda-buffer)
+            org-agenda-buffer))
+           (org-select-this-todo-keyword
+            (if (stringp arg) arg
+              (and arg (integerp arg) (> arg 0)
+                   (nth (1- arg) kwds))))
+           rtn rtnall files file pos marker buffer)
+      (when (equal arg '(4))
+        (setq org-select-this-todo-keyword
+              (org-icompleting-read "Keyword (or KWD1|K2D2|...): "
+                                    (mapcar 'list kwds) nil nil)))
+      (and (equal 0 arg) (setq org-select-this-todo-keyword nil))
+      (catch 'exit
+        (org-compile-prefix-format 'todo)
+        (org-set-sorting-strategy 'todo)
+        (setq files (org-agenda-files nil 'ifmode)
+              rtnall nil)
+        (while (setq file (pop files))
+          (catch 'nextfile
+            (org-check-agenda-file file)
+            (setq rtn (org-agenda-get-day-entries file date :todo))
+            (setq rtnall (append rtnall rtn))))
+
+        (when rtnall
+          (setq lucky-entry
+                (nth (random
+                      (safe-length
+                       (setq entries rtnall)))
+                     entries))
+
+          (setq marker (or (get-text-property 0 'org-marker lucky-entry)
+                           (org-agenda-error)))
+          (setq buffer (marker-buffer marker))
+          (setq pos (marker-position marker))
+          (org-pop-to-buffer-same-window buffer)
+          (widen)
+          (goto-char pos)
+          (when (derived-mode-p 'org-mode)
+            (org-show-context 'agenda)
+            (save-excursion
+              (and (outline-next-heading)
+                   (org-flag-heading nil))) ; show the next heading
+            (when (outline-invisible-p)
+              (show-entry))                 ; display invisible text
+            (run-hooks 'org-agenda-after-show-hook))))))
+
+#+END_SRC
+
+*** Todo count
+#+BEGIN_SRC emacs-lisp
+(defun tag-count (tag)
+  (setq todo-only nil)
+  (setq matcher (org-make-tags-matcher (concat ":" tag ":"))
+	    match (car matcher) matcher (cdr matcher))
+
+ (setq files (org-agenda-files nil 'ifmode)
+	    rtnall nil)
+      (while (setq file (pop files))
+	(catch 'nextfile
+	  (org-check-agenda-file file)
+	  (setq buffer (if (file-exists-p file)
+			   (org-get-agenda-file-buffer file)
+			 (error "No such file %s" file)))
+	  (if (not buffer)
+	      ;; If file does not exist, error message to agenda
+	      (setq rtn (list
+			 (format "ORG-AGENDA-ERROR: No such org-file %s" file))
+		    rtnall (append rtnall rtn))
+	    (with-current-buffer buffer
+	      (unless (derived-mode-p 'org-mode)
+		(error "Agenda file %s is not in `org-mode'" file))
+	      (save-excursion
+		(save-restriction
+		  (if (eq buffer org-agenda-restrict)
+		      (narrow-to-region org-agenda-restrict-begin
+					org-agenda-restrict-end)
+		    (widen))
+		  (setq rtn (org-scan-tags 'org-get-tags-string matcher todo-only))
+		  (setq rtnall (append rtnall rtn))
+
+                  ))))))
+      (concat tag ": " (number-to-string (length rtnall))))
+
+#+END_SRC
 ** org-mobile
 
 Started using org-mobile to bring some level of ahem mobility to my
@@ -1589,7 +1705,17 @@ keeping around. Will see :)
 #+END_SRC
 
 I seem to edit too much json for my liking. Would like to get code
-folding working eventually too.
+folding working eventually too. Let's have a crack:
+
+#+BEGIN_SRC emacs-lisp
+
+(add-hook 'js-mode-hook
+  (lambda()
+    (local-set-key (kbd "C-c <right>") 'hs-show-block)
+    (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+    (hs-minor-mode t)))
+
+#+END_SRC
 * Notification Systems
 
 ** The great eye of Sauron
