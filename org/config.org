@@ -983,6 +983,15 @@ before we use git annex for attachments and the default method to move:
 
 #+END_SRC
 
+** org-babel
+Enable shell as well as the default of emacs-lisp.
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh . t)
+   (emacs-lisp . t)
+   ))
+#+END_SRC
 * Programming Modes
 ** prog-mode
 
