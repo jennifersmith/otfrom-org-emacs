@@ -678,6 +678,30 @@ around for
 
 
 #+END_SRC
+
+And set added at time in batch
+#+BEGIN_SRC emacs-lisp
+
+ (defun batch-added-at ()
+                 (interactive "P")
+                 (let* ((marker (or (org-get-at-bol 'org-hd-marker)
+                                    (org-agenda-error)))
+                        (buffer (marker-buffer marker)))
+                   (with-current-buffer buffer
+                     (save-excursion
+                       (save-restriction
+                         (widen)
+                         (goto-char marker)
+                         (org-back-to-heading t)
+                         (org-set-property "ADDED_AT" (format-time-string "[%Y-%m-%d]")))))))
+
+
+#+END_SRC
+*** Custom shortcut
+
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-x a") 'org-agenda)
+    #+END_SRC
 *** Get all tags
 #+BEGIN_SRC emacs-lisp
 
@@ -842,6 +866,20 @@ from: http://orgmode.org/worg/org-hacks.html#unnumbered-107
     (add-text-properties (match-beginning 0) (point-at-eol)
                          `(face (:foreground ,col)))))
 
+*** Exporting periodically
+Via [[http://superuser.com/questions/700665/export-org-agenda-views-periodically-in-emacs][stackoverflow]]
+#+BEGIN_SRC emacs-lisp
+
+
+(defun run-agenda-store ()
+  ""
+  (message "Exporting Agenda... ")
+  (save-some-buffers 1)
+  (org-batch-store-agenda-views)
+  (message "Agenda exported!"))
+
+(run-at-time 5 5 'run-agenda-store)
+#+END_SRC
 ** org-mobile
 
 Started using org-mobile to bring some level of ahem mobility to my
@@ -971,6 +1009,34 @@ From [[http://stackoverflow.com/questions/24330980/enumerate-all-tags-in-org-mod
 
 
 #+END_SRC
+
+Uses current context to show tags
+#+BEGIN_SRC emacs-lisp
+(defun todo-tags-at-point ()
+  "show tags for word at point"
+  (interactive)
+  (let* ((bounds (if (use-region-p)
+                     (cons (region-beginning) (region-end))
+                   (bounds-of-thing-at-point 'word)))
+         (text  (when bounds  (buffer-substring-no-properties (car bounds) (cdr bounds)))))
+    (when text
+      (org-tags-view 0 text))))
+(defun tags-at-point ()
+  "show tags for word at point"
+  (interactive)
+  (let* ((bounds (if (use-region-p)
+                     (cons (region-beginning) (region-end))
+                   (bounds-of-thing-at-point 'word)))
+         (text  (when bounds  (buffer-substring-no-properties (car bounds) (cdr bounds)))))
+    (when text
+      (org-tags-view nil text))))
+(global-set-key (kbd "C-x t") 'todo-tags-at-point)
+
+#+END_SRC
+
+#+RESULTS:
+: todo-tags-at-point
+
 ** org-attach
 
 I like using org attach to manage files . This sets up the cutoff
