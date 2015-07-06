@@ -22,6 +22,23 @@
    #+END_SRC
 
 
+** Goto-config
+
+#+BEGIN_SRC emacs-lisp
+
+(defun goto-config ()
+"Jump to the config file for emacs"
+(interactive)
+(find-file "~/.emacs.d/org/config.org"))
+
+(defun goto-local-config ()
+"Jump to the local/customize config file for emacs"
+(interactive)
+(find-file "~/.emacs.d/local/custom.el"))
+
+
+
+#+END_SRC
 * OSX modifications /affordances
 
 Apparently the built in `ls` on OSX does not support the --dired switch that seemingly gnu-ls provides. I have installed coreutils via homebrew which gives me access to `gls` so let's use that instead:
@@ -376,7 +393,7 @@ NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
    Jen: actually I just removed it full stop, this is more fun. But
    changing where the history is saved
 
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC
      (ido-mode 1)
      (setq ido-enable-flex-matching 1)
      (setq ido-save-directory-list-file "~/.emacs.d/private/ido")
@@ -464,6 +481,30 @@ So ack-and-a-half is not supported any more, and projectile appears to suggest u
 Will I be able to remember to use 'projectile ag'??
 
 
+** Helm
+
+#+BEGIN_SRC emacs-lisp
+
+(require 'helm-config)
+
+#+END_SRC
+
+#+RESULTS:
+: helm-config
+
+** Etags
+
+do etags stuff from emacs
+#+BEGIN_SRC emacs-lisp
+  (defun create-tags (dir-name)
+     "Create tags file."
+     (interactive "DDirectory: ")
+     (eshell-command
+      (format "cd %s; git ls-files | grep -ve 'png$' |  | etags -" dir-name)))
+#+END_SRC
+
+#+RESULTS:
+: create-tags
 
 * Text Modes
 All from @otfrom - well apart from what i added ;)
@@ -589,12 +630,12 @@ All from @otfrom - well apart from what i added ;)
 
 How many words have I written? Great for procrastinating.
 
-#+BEGIN_SRC emacs-lisp
+#+DONTBEGIN_SRC emacs-lisp
 (maybe-install-and-require 'wc-mode)
 (add-hook 'text-mode-hook
                (lambda ()
             (wc-mode 1)))
-#+END_SRC
+#+DONTEND_SRC
 
 This sets a minimal wordcount display - total number of words and
 number of words that I haven't saved yet!
@@ -646,11 +687,9 @@ Anyway, I have all my relevant 'agenda' files in ~/Dropbox/gtd
 ... actually if something in there is not a relevant agenda file then
 it shouldn't be in the folder!
 
-#+BEGIN_SRC emacs-lisp
+Update: this is not actually true any more. Going to manage the list
+of relevant files in my local config !
 
-(setq org-agenda-files (file-expand-wildcards "~/Dropbox/gtd/*.org"))
-
-#+END_SRC
 
 Start the week on whatever day I am looking at.
 #+BEGIN_SRC emacs-lisp
@@ -683,6 +722,19 @@ And set added at time in batch
 #+BEGIN_SRC emacs-lisp
 
  (defun batch-added-at ()
+                 (interactive "P")
+                 (let* ((marker (or (org-get-at-bol 'org-hd-marker)
+                                    (org-agenda-error)))
+                        (buffer (marker-buffer marker)))
+                   (with-current-buffer buffer
+                     (save-excursion
+                       (save-restriction
+                         (widen)
+                         (goto-char marker)
+                         (org-back-to-heading t)
+                         (org-set-property "ADDED_AT" (format-time-string "[%Y-%m-%d]")))))))
+
+ (defun clear-priorities ()
                  (interactive "P")
                  (let* ((marker (or (org-get-at-bol 'org-hd-marker)
                                     (org-agenda-error)))
@@ -849,37 +901,60 @@ from: http://orgmode.org/worg/org-hacks.html#unnumbered-107
 #+END_SRC
 
 *** category headers color
+#+BEGIN_SRC emacs-lisp
 
-(remove-hook 'org-finalize-agenda-hook
+(add-hook 'org-finalize-agenda-hook
           (lambda ()
             (save-excursion
-              (color-org-header "PublicHolidays:"  "SteelBlue")
-              (color-org-header "Birthdays:" "MediumPurple")
-              (color-org-header "Work:"      "orange")
-              (color-org-header "Off-site:"  "SkyBlue4"))))
+              (color-org-header "PublicHolidays:"  "yellow1")
+              (color-org-header "AnnualLeave:"  "yellow1")
+              (color-org-header "Weekend:"  "yellow1")
+              (color-org-header "WorkDay:"  "firebrick3")
+               )))
 
 (defun color-org-header (tag col)
   ""
   (interactive)
   (goto-char (point-min))
   (while (re-search-forward tag nil t)
-    (add-text-properties (match-beginning 0) (point-at-eol)
-                         `(face (:foreground ,col)))))
+(add-text-properties (match-beginning 0) (match-end 0)
+                         `(face (:weight bold)))
+(add-text-properties (match-beginning 0) (line-end-position)
+                         `(face (:foreground ,col)))
+ ))
+
+#+END_SRC
+
+#+RESULTS:
+: color-org-header
 
 *** Exporting periodically
 Via [[http://superuser.com/questions/700665/export-org-agenda-views-periodically-in-emacs][stackoverflow]]
 #+BEGIN_SRC emacs-lisp
-
-
 (defun run-agenda-store ()
   ""
-  (message "Exporting Agenda... ")
-  (save-some-buffers 1)
+(interactive)
+  (org-save-all-org-buffers)
   (org-batch-store-agenda-views)
-  (message "Agenda exported!"))
+  (message "Agenda exported!!!!"))
 
-(run-at-time 5 5 'run-agenda-store)
+
 #+END_SRC
+
+#+RESULTS:
+: run-agenda-store
+
+*** Finish a day's review
+
+#+BEGIN_SRC emacs-lisp
+
+(defun finish-review ()
+(interactive)
+(shell-command-to-string
+  (concat "git commit -am 'Finishing review for " (format-time-string "%F") "'"))
+(run-agenda-store))
+#+END_SRC
+
 ** org-mobile
 
 Started using org-mobile to bring some level of ahem mobility to my
@@ -967,19 +1042,15 @@ getting things done.
 
 ** org-journal
 
-Not really got my self into using this, but I have it set up to send
-stuff to DB:
+Using a LOT now - so shortcut it
 #+BEGIN_SRC emacs-lisp
 (setq org-journal-dir "~/Dropbox/orgjournal/")
+      (global-set-key (kbd "C-x j") 'org-journal-new-entry)
 #+END_SRC
 
 
 ** org-icalendar
 Sort of publish it - will do on save later
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-icalendar-after-save-hook (lambda (file)  (copy-file file (concat "~/Sites/"  (file-relative-name file "~/" )))))
-
-#+END_SRC
 
 ** tags
 
@@ -1626,7 +1697,7 @@ Well... ok just one right now.
      Kris Jenkins has a great helm-clojure-headlines that I'd like to
      bind to s-h when in clojure-mode.
 
-     #+BEGIN_SRC emacs-lisp
+     #+DONT_BEGIN_SRC emacs-lisp
        (defun helm-clojure-headlines ()
          "Display headlines for the current Clojure file."
          (interactive)
@@ -1636,21 +1707,7 @@ Well... ok just one right now.
 
        (add-hook 'clojure-mode-hook
                  (lambda () (local-set-key (kbd "s-h") 'helm-clojure-headlines)))
-     #+END_SRC
-
-**** Clojure Cheat Sheet
-
-     It was this helm addon from Kris Jenkins that made me start to
-     look at helm. And having the clojure cheat sheet to hand is
-     useful.
-
-     I like binding cheatsheets to s-f9.
-
-     #+BEGIN_SRC emacs-lisp
-       (maybe-install-and-require 'clojure-cheatsheet)
-       (add-hook 'clojure-mode-hook
-                 (lambda () (local-set-key [s-f1] 'clojure-cheatsheet)))
-     #+END_SRC
+     #+DONT_END_SRC
 
 **** sw1nn-cider-perspective or Engineering
 
@@ -1945,13 +2002,34 @@ These are commented out (essentially) customizations from my local
 custom.el file that I am not sure why I set. If I need them... this is
 where they are.
 
-#+BEGIN_SRC not-anything
-(custom-set-variables
- '(helm-M-x-fuzzy-match 1)
- '(helm-match-plugin-mode t nil (helm-match-plugin)))
-#+END_SRC
+
 
 * Custom.el stuff I havent filed but would like in source control
+
+
+Borrowed from a gh that doesn'tseem to be there no more
+#+BEGIN_SRC emacs-lisp
+
+(defun holiday-christmas-bank-holidays ()
+  (let ((m displayed-month)
+        (y displayed-year))
+    (increment-calendar-month m y -1)
+    (when (>= m 10)
+      (let ((d (calendar-day-of-week (list 12 25 y))))
+        (cond ((= d 5)
+               (list (list (list 12 28 y)
+                           "Boxing Day Bank Holiday")))
+              ((= d 6)
+               (list (list (list 12 27 y)
+                           "Boxing Day Bank Holiday")
+                     (list (list 12 28 y)
+                           "Christmas Day Bank Holiday")))
+              ((= d 0)
+               (list (list (list 12 27 y)
+                           "Christmas Day Bank Holiday"))))))))
+
+#+END_SRC
+
 
 #+BEGIN_SRC emacs-lisp
 
@@ -1960,33 +2038,14 @@ where they are.
  '(calendar-holidays
    (quote
     ((holiday-fixed 1 1 "New Year's Day")
-     (holiday-fixed 3 17 "St. Patrick's Day")
-     (holiday-easter-etc -21 "Mother's Day")
-     (holiday-float 5 1 -1 "Memorial Day")
-     (holiday-float 6 0 3 "Father's Day")
-     (holiday-fixed 10 31 "Halloween")
      (holiday-easter-etc)
      (holiday-float 3 1 2 "Labour Day (Australia)")
-     (holiday-fixed 1 26 "Australia Day")
+     (holiday-float 1 1 4  "Australia Day")
      (holiday-fixed 12 25 "Christmas")
-     (holiday-fixed 4 25 "ANZAC Day")
      (holiday-float 6 0 2 "Queen's birthday")
      (holiday-float 11 2 1 "Melbourne cup day")
-     (holiday-chinese-new-year)
-     (solar-equinoxes-solstices)
-     (holiday-sexp calendar-daylight-savings-starts
-                   (format "Daylight Saving Time Begins %s"
-                           (solar-time-string
-                            (/ calendar-daylight-savings-starts-time
-                               (float 60))
-                            calendar-standard-time-zone-name)))
-     (holiday-sexp calendar-daylight-savings-ends
-                   (format "Daylight Saving Time Ends %s"
-                           (solar-time-string
-                            (/ calendar-daylight-savings-ends-time
-                               (float 60))
-                            calendar-daylight-time-zone-name))))))
- '(org-agenda-bulk-custom-functions (quote ((67 mark-as-seen))))
+                            )))
+ '(org-agenda-bulk-custom-functions (quote ((66 batch-added-at))))
 
  '(org-agenda-default-appointment-duration 20)
  '(org-agenda-log-mode-add-notes nil)
@@ -2009,3 +2068,5 @@ where they are.
  '(whitespace-line-column 120))
 
 #+END_SRC
+
+#+RESULTS:
