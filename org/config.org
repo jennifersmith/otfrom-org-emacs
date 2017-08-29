@@ -243,27 +243,6 @@ Thanks @bodil!
 (nyan-mode)
 #+END_SRC
 
-*** Transparency
-
-"   I don't use this all the time, but sometimes, when I'm hacking
-   only on my diddy 13" laptop I like to have a window tailing a file
-   in the background while I'm writing something in the
-   foreground. This let's us toggle transparency. Who wouldn't like
-   that? I'm pretty sure I got this from [[https://twitter.com/IORayne][Anthony Grimes]].
-"
-(Jen: This is awesome!)
-#+BEGIN_SRC emacs-lisp
-
-
-(defun toggle-transparency ()
-  (interactive)
-  (let ((param (cadr (frame-parameter nil 'alpha))))
-    (if (and param (/= param 100))
-        (set-frame-parameter nil 'alpha '(100 100))
-      (set-frame-parameter nil 'alpha '(85 50)))))
-(global-set-key (kbd "C-c t") 'toggle-transparency)
-
-#+END_SRC
 ** Startup Screen
 
    I'd also like to ski the startup screen and go straight to
@@ -630,12 +609,12 @@ All from @otfrom - well apart from what i added ;)
 
 How many words have I written? Great for procrastinating.
 
-#+DONTBEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (maybe-install-and-require 'wc-mode)
 (add-hook 'text-mode-hook
                (lambda ()
             (wc-mode 1)))
-#+DONTEND_SRC
+#+END_SRC
 
 This sets a minimal wordcount display - total number of words and
 number of words that I haven't saved yet!
@@ -677,6 +656,7 @@ up the one from the org elpa?).
 (maybe-install-and-require 'org)
 
 #+END_SRC
+
 ** org-agenda
 
 It's only been a week and I have only scratched surface of what I can
@@ -1129,6 +1109,55 @@ Enable shell as well as the default of emacs-lisp.
    (emacs-lisp . t)
    ))
 #+END_SRC
+** epic
+Evernote picker / exporter
+
+#+BEGIN_SRC emacs-lisp
+
+(maybe-install-and-require 'epic)
+
+
+#+END_SRC
+
+** org-ref
+
+Citations
+
+#+BEGIN_SRC emacs-lisp
+
+  (maybe-install-and-require 'org-ref)
+
+  (setq reftex-default-bibliography '("~/Dropbox/bibliography/references.bib"))
+
+  ;; see org-ref for use of these variables
+  (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
+        org-ref-default-bibliography '("~/Dropbox/bibliography/references.bib")
+        org-ref-pdf-directory '("~/Dropbox/bibliography/bibtex-pdfs/"))
+
+  (setq helm-bibtex-bibliography "~/Dropbox/bibliography/references.bib")
+  (setq helm-bibtex-library-path "~/Dropbox/bibliography/bibtex-pdfs")
+
+  ;; open pdf with system pdf viewer (works on mac)
+  (setq helm-bibtex-pdf-open-function
+    (lambda (fpath)
+      (start-process "open" "*open*" "open" fpath)))
+
+  ;; alternative
+  ;; (setq helm-bibtex-pdf-open-function 'org-open-file)
+
+
+
+#+END_SRC
+
+** org-src
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-src-fontify-natively t)
+
+#+END_SRC
+
+
 * Programming Modes
 ** prog-mode
 
@@ -1207,9 +1236,11 @@ mainly use for json right now but will enable it on all prog modes (diminised).
     jen: no idea...
 
     #+BEGIN_SRC emacs-lisp
+
       (maybe-install-and-require 'color-identifiers-mode)
       (global-color-identifiers-mode t)
       (diminish 'color-identifiers-mode)
+
     #+END_SRC
 
 ** yasnippet
@@ -1380,6 +1411,12 @@ Well... ok just one right now.
      #+DONT_BEGIN_SRC emacs-lisp
        (add-hook 'cider-mode-hook 'subword-mode)
      #+DONT_END_SRC
+#+BEGIN_SRC
+(setq cider-cljs-lein-repl
+      "(do (user/go)
+      (user/cljs-repl))")
+
+#+END_SRC
 
 **** helm and clojure
 
@@ -1825,6 +1862,7 @@ major-mode equivalent.
   (lambda()
     (setq mode-name "sh-script")))
 #+END_SRC
+
 ** pastebins
 
    gist, pastebin, refheap. All good ways of sharing snippets of code
@@ -1849,6 +1887,15 @@ major-mode equivalent.
     #+END_SRC
 
 
+** Frink
+
+Hmm
+
+#+BEGIN_SRC emacs-lisp
+
+(require 'frink-mode)
+
+#+END_SRC
 * Data Modes
 
   Some things aren't really text and aren't really source code
@@ -2070,3 +2117,9 @@ Borrowed from a gh that doesn'tseem to be there no more
 #+END_SRC
 
 #+RESULTS:
+
+#+BEGIN_SRC emacs-lisp
+
+(global-set-key (kbd "C-x f") 'toggle-frame-fullscreen)
+
+#+END_SRC
