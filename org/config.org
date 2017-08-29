@@ -1,0 +1,6 @@
+* Jen's emacs config
+
+#+BEGIN_SRC emacs-lisp
+(message "oh hai")
+
+#+END_SRC
