@@ -1,6 +1,57 @@
 * Jen's emacs config
 
+** Fullscreen shortcut
+
+Full screen for productivity... or because I have installed a fabulous theme.
+
 #+BEGIN_SRC emacs-lisp
-(message "oh hai")
+(global-set-key (kbd "C-x f") 'toggle-frame-fullscreen)
 
 #+END_SRC
+
+** Start emacs-server
+
+Emacs tends to run for weeks at a time for me (with all the 10000 buffers I want to access ready to go).
+
+*** TODO Get emacsclient upgraded and working properly 
+
+#+BEGIN_SRC emacs-lisp
+
+(server-start)
+
+#+END_SRC
+
+** Enabling shift-select
+
+Other forms of select just don't stick. This is like habit. So it gotta stay.
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-support-shift-select 1)
+
+#+END_SRC
+
+** Shortcuts
+
+Helpful to be able to get straight to my config. Weird naming but whevs. 
+
+#+BEGIN_SRC emacs-lisp
+
+(defun jump-to-config ()
+"Jump to the config orgmode file I use to configure emacs"
+(interactive)
+(find-file "~/.emacs.d/org/config.org"))
+
+#+END_SRC
+
+** Custom settings location
+
+Avoid polluting init.el with custom settings - this can be a temporary stop-gap before they wind up in here or just grow if I can't be bothered to do anything with them.
+
+#+BEGIN_SRC emacs-lisp
+
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+#+END_SRC
+
+
