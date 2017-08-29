@@ -1,0 +1,2125 @@
+* Helpers
+
+  There are a number of helper functions that we'll need through the
+  rest of this. We'll just define them up here.
+
+** load-if-exists
+
+   This is just a nice function to load a file if it exists, but just
+   print a message rather than an error if it doesn't. This is handy
+   for things like loading specific local config that you don't want
+   to go into github or be shared such as erc nicks, passwords, blog
+   rolls, etc.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun load-if-exists (file)
+       (if (file-exists-p file)
+           (progn
+             (load file)
+             (message (format "Loading file: %s" file)))
+         (message (format "No %s file. So not loading one." file))))
+
+   #+END_SRC
+
+
+** Goto-config
+
+#+BEGIN_SRC emacs-lisp
+
+(defun goto-config ()
+"Jump to the config file for emacs"
+(interactive)
+(find-file "~/.emacs.d/org/config.org"))
+
+(defun goto-local-config ()
+"Jump to the local/customize config file for emacs"
+(interactive)
+(find-file "~/.emacs.d/local/custom.el"))
+
+
+
+#+END_SRC
+* OSX modifications /affordances
+
+Apparently the built in `ls` on OSX does not support the --dired switch that seemingly gnu-ls provides. I have installed coreutils via homebrew which gives me access to `gls` so let's use that instead:
+#+BEGIN_SRC emacs-lisp
+(setq insert-directory-program "/usr/local/bin/gls")
+
+#+END_SRC
+
+[[http://stackoverflow.com/questions/4076360/error-in-dired-sorting-on-os-x][Related StackOverflow
+]]
+
+
+* Globals
+
+  A set of modes etc. that will be globally loaded.
+
+** diminish
+
+   As we add lots of useful minor-modes the mode line can get a bit
+   unwieldy. diminish-mode helps us with that. We'll set it up here
+   and use it in various places throughout the setup.
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'diminish)
+   #+END_SRC
+
+** indent-tabs-mode
+
+   Emacs uses tabs for indentation by default (though I believe it additionally depends on active modes. Anyway, not a usual practice for me so let's use spaces:
+
+   #+BEGIN_SRC emacs-lisp
+     (setq-default indent-tabs-mode nil)
+   #+END_SRC
+
+** uniquify
+
+Give nice unique names to similarly-named buffers. Useful if you have lots of files open with the same name.
+   #+BEGIN_SRC emacs-lisp
+     (require 'uniquify)
+     (setq uniquify-buffer-name-style 'post-forward)
+   #+END_SRC
+
+
+** save files
+
+*** Temp files
+Throw temporary files into a ~/.saves/ directory. I am a complete nerd so I am upping the history.
+
+   #+BEGIN_SRC emacs-lisp
+   (setq
+     backup-by-copying t      ; don't clobber symlinks
+     backup-directory-alist
+      '(("." . "~/.saves"))    ; don't litter my fs tree
+     delete-old-versions nil
+     kept-new-versions 99
+     kept-old-versions 99
+     version-control t)
+   #+END_SRC
+
+*** Bookmarks
+
+These I seem to use by accident by keyboard stabbing. I could disable
+them but I am interested to see if they are useful.
+
+#+BEGIN_SRC emacs-lisp
+(setq bookmark-default-file "~/.emacs.d/private/bookmarks")
+
+#+END_SRC
+
+
+** Hippie Expand
+
+Following from @otfrom's original, I am going to try using hippie-expand. Note I am binding it to where dabbrev-expand usually sits. That's because my head has only room for one expansion combo and I can't be bothered to change it.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-/") 'hippie-expand)
+#+END_SRC
+
+
+** What do I use
+
+Profile your usage. Find out what you use the most by using keyfreq.
+
+Yay... me analytics.
+
+#+BEGIN_SRC emacs-lisp
+
+(maybe-install-and-require 'keyfreq)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+#+END_SRC
+
+
+** emacs-server
+
+   Emacs startup time isn't nearly as much of a problem as it used to
+   be. I'm also pretty patient as I've been working with JVM startup
+   times over the years.
+
+   However, it is still nice to be able to attach to a running Emacs
+   process when we want to. To that end, let's start up an
+   emacs-server.
+
+   #+BEGIN_SRC emacs-lisp
+     (server-start)
+   #+END_SRC
+
+
+* non-elpa and work arounds
+
+For anything not available from elpa, a non-elpa directory! Currently not in use at the moment, but good to keep around.
+
+** non-elpa files
+
+   Unfortunately, we can't get everything we want from the package
+   archives or we might have files that we're working on locally that
+   we haven't released yet. We keep those in a non-elpa directory. We
+   need to add this to the load-path so that we can require the files
+   we have here.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'load-path (concat user-emacs-directory "non-elpa/"))
+   #+END_SRC
+
+
+
+
+* Macintosh Specific Setup
+
+** $PATH is broken
+   From original
+   "If you don't run emacs in a terminal on Mac OS X then it can be
+   really awkward to get the stuff you want in your path. This is the
+   best way I've found so far to sort this out and get things like
+   ~/bin and /usr/loca/bin in a $PATH that emacs can access. I quite
+   like running emacs from outside the terminal.
+
+   Thanks to the lovely and helpful [[https://twitter.com/_tobrien][Tom O'Brien]] I've got a better way
+   of doing this and now my emacs environment will be in sync with my
+   shell. You can out more at the github page for
+   [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]."
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'exec-path-from-shell)
+     (when (memq window-system '(mac ns))
+       (exec-path-from-shell-initialize))
+   #+END_SRC"
+
+
+* Make it Pretty
+
+** color themes
+
+*** custom-theme-directory
+
+    "Themes seem to be quite picky about where they live. They require
+    custom-theme-directory to be set. By default this is the same as
+    user-emacs-directory, which is usually ~/.emacs.d. I'd like to
+    keep them separate if possible. I learned this one by reading
+    some of [[https://github.com/sw1nn/dotfiles][Neale Swinnerton's dotfiles]]."
+
+    #+BEGIN_SRC emacs-lisp
+      (setq custom-theme-directory (concat user-emacs-directory "themes"))
+    #+END_SRC
+
+*** cyberpunk
+
+    Going back to the original cyberpunk
+
+    #+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'cyberpunk-theme)
+
+    #+END_SRC
+
+
+** fonts
+
+Taking the advice from @otfrom again and going with his font settings. Menlo is pretty but set-default-font didn't work for me.
+#+BEGIN_SRC emacs-lisp
+(if (memq window-system '(mac ns))
+    (set-face-attribute 'default t :font  "Menlo" )
+  (set-default-font "Inconsolata-10"))
+
+#+END_SRC
+
+** bars, menus and numbers
+
+Let's kill the crap around the edges but give a little bit of navigation with col/line umbers
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(line-number-mode 1)
+(column-number-mode 1)
+
+#+END_SRC
+*** nyan-mode
+
+Thanks @bodil!
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'nyan-mode)
+(nyan-mode)
+#+END_SRC
+
+** Startup Screen
+
+   I'd also like to ski the startup screen and go straight to
+   the *scratch* buffer.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq inhibit-startup-screen t)
+   #+END_SRC
+
+** Frames
+
+Make it nice and big when I start. This is possibly something that might have to be changed when I am on thunderbold but whevs
+
+#+BEGIN_SRC emacs-lisp
+;;(setq default-frame-alist '((width . 140) (height . 60)))
+
+#+END_SRC
+I might follow this [[http://stackoverflow.com/questions/17362999/setting-both-fullheight-and-width-in-emacs-on-os-x][stackoverflow]] if this is not sufficient.
+
+NOTE: Commented this out. Weeeeeeird bugs I can't be arsed to address right now
+
+
+* general tool type things
+
+** company
+
+
+   "Complete Anything or [[http://company-mode.github.io/][company-mode]] seems to be the way to complete
+   things in emacs now."
+
+   (Jen: Not tried this - but maybe better than what I have?)
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'company)
+     (add-hook 'after-init-hook 'global-company-mode)
+     (diminish 'company-mode "CA")
+   #+END_SRC
+
+** dired
+
+   "dired can do lots of things. I'm pretty basic in my use. I do like
+   to have the file listings use human friendly numbers though."
+
+   #+BEGIN_SRC emacs-lisp
+     (setq dired-listing-switches "-alh")
+   #+END_SRC
+
+** git
+
+*** magit
+
+    magit is a *fantastic* mode for dealing with git.
+
+    #+BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'magit)
+    #+END_SRC
+
+    I use magit-status a lot. So let's bind it to C-x g.
+
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-x g") 'magit-status)
+    #+END_SRC
+
+*** git-gutter-mode+
+
+    It is really nice having +/= in the gutter. I like it more than
+    having line numbers and thus I've dumped linum-mode.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'git-gutter-fringe+)
+      (global-git-gutter+-mode t)
+    #+END_SRC
+
+    It is also quite nice to be able to navigate a file by he git
+    hunks. It makes it a bit easier to see what has changed since the
+    last time in the context of the whole file.
+
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "s-n") 'git-gutter+-next-hunk)
+      (global-set-key (kbd "s-p") 'git-gutter+-previous-hunk)
+    #+END_SRC
+
+    We can diminish the size of GitGutter in the mode-line
+
+    #+BEGIN_SRC emacs-lisp
+      (diminish 'git-gutter+-mode)
+    #+END_SRC
+
+*** magit-auto-revert
+
+    I like that I get an auto-revert when magit changes files based on
+    a pull or merge. I don't need to see it cluttering up my mode-line
+    though.
+
+    #+BEGIN_SRC emacs-lisp
+      (diminish 'magit-auto-revert-mode)
+    #+END_SRC
+
+*** git-messenger
+
+    Get the commit information for the current line. A bit like a mini
+    git blame.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'git-messenger)
+    #+END_SRC
+
+*** github-browse-file
+
+    When working with others I often want to point out a line I'm
+    looking at in a file we already have in github. I'd like to be
+    able to get the link rather than doing some sort of
+    paste/gist/refheap.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'github-browse-file)
+    #+END_SRC
+
+
+** ido
+
+  " I've gotten a bit fed up with helm and it really freaks people out
+   who aren't used to it when they come to use my emacs. ido mode does
+   similar things to helm in a number of circumstances and I can still
+   use helm for cheatsheets and other things"
+
+   Jen: actually I just removed it full stop, this is more fun. But
+   changing where the history is saved
+
+   #+BEGIN_SRC
+     (ido-mode 1)
+     (setq ido-enable-flex-matching 1)
+     (setq ido-save-directory-list-file "~/.emacs.d/private/ido")
+   #+END_SRC
+
+** window and buffer tweaking
+
+*** window movement
+
+    "I need to remap the windmove keys so that they don't conflict with
+    the org-mode or paredit keys."
+
+    Jen: Me too but those conflict with 'spectacles' which I cannot disable for emacs yet (see [[https://github.com/eczarny/spectacle/issues/254][issue]])
+
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key [C-s-up] 'windmove-up)
+      (global-set-key [C-s-down] 'windmove-down)
+      (global-set-key [C-s-right] 'windmove-right)
+      (global-set-key [C-s-left] 'windmove-left)
+    #+END_SRC
+
+*** buffer movement
+
+    "Sometimes the problem isn't that you want to move the cursor to a
+    particular window, but you want to move a buffer. buffer-move lets
+    you do that."
+
+Jen: These may conflict with orgmode stuff...
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'buffer-move)
+      (global-set-key (kbd "<s-up>")     'buf-move-up)
+     (global-set-key (kbd "<s-down>")   'buf-move-down)
+      (global-set-key (kbd "<s-left>")   'buf-move-left)
+      (global-set-key (kbd "<s-right>")  'buf-move-right)
+    #+END_SRC
+
+** ibuffer
+
+  " I've never used ibuffer much before, but many people swear by it
+   (rather than at it). I've tried it now and it looks good. So let's
+   rebind C-x C-b."
+
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-x C-b") 'ibuffer)
+   #+END_SRC
+
+** projectile
+
+   "[[https://github.com/bbatsov/projectile][projectile]] from [[http://twtitter.com/bbatsov][Bozhidar Batsov]] constrains and helps things like
+   searches so that they happen within a git repo or leiningen
+   project."
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'projectile)
+     (projectile-global-mode)
+   #+END_SRC
+
+  " But we don't need to see that projectile mode is running everywhere
+   so let's diminish it."
+
+   #+BEGIN_SRC emacs-lisp
+     (diminish 'projectile-mode)
+   #+END_SRC
+
+   I want to be able to save projectile stuff to a 'private'
+   directory... so I don't wind up checking in
+   '/jen/supersecretproject/' into github :).
+#+BEGIN_SRC emacs-lisp
+
+(setq projectile-cache-file "/Users/jensmith/.emacs.d/private/projectile.cache")
+(setq projectile-known-projects-file "/Users/jensmith/.emacs.d/private/projectile-bookmarks.eld")
+
+#+END_SRC
+
+** Search
+I do a lot of 'code archaeology' which is a fancy way of saying 'I use
+ack a lot'.
+
+So ack-and-a-half is not supported any more, and projectile appears to suggest using ag is better. I am all for trying new things ( [[https://github.com/ggreer/the_silver_searcher][ag gh]] - quote "The command name is 33% shorter than ack, and all keys are on the home row!").
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'ag)
+#+END_SRC
+
+Will I be able to remember to use 'projectile ag'??
+
+
+** Helm
+
+#+BEGIN_SRC emacs-lisp
+
+(require 'helm-config)
+
+#+END_SRC
+
+#+RESULTS:
+: helm-config
+
+** Etags
+
+do etags stuff from emacs
+#+BEGIN_SRC emacs-lisp
+  (defun create-tags (dir-name)
+     "Create tags file."
+     (interactive "DDirectory: ")
+     (eshell-command
+      (format "cd %s; git ls-files | grep -ve 'png$' |  | etags -" dir-name)))
+#+END_SRC
+
+#+RESULTS:
+: create-tags
+
+* Text Modes
+All from @otfrom - well apart from what i added ;)
+
+** Text Mode Basics
+
+   If we are in a text mode we want flyspell and auto-fill-mode.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'text-mode-hook
+               (lambda ()
+                       (flyspell-mode 1)
+                       (diminish 'flyspell-mode)
+                       (auto-fill-mode 1)
+                       (diminish 'auto-fill-function)))
+   #+END_SRC
+
+*** Delete that trailing whitespace
+
+    Trailing whitespace just causes trouble with diffs and version
+    control. So let's get rid of it.
+
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'before-save-hook
+                (lambda nil
+                  (delete-trailing-whitespace)))
+    #+END_SRC
+
+
+** html, sgml, xml
+
+*** tagedit
+
+    This gives us paredit like editing for html
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'tagedit)
+      (eval-after-load "sgml-mode"
+        '(progn
+           (require 'tagedit)
+           (tagedit-add-paredit-like-keybindings)
+           (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+    #+END_SRC
+
+    I quite like the sound of the experimental editing stuff. Let's
+    put it in and see if it helps or destroys our code.
+
+    #+BEGIN_SRC emacs-lisp
+      (tagedit-add-experimental-features)
+    #+END_SRC
+
+*** css
+
+    I should probably look at adding more sugar to this.
+
+**** paredit
+
+     I *always* want my parens to match (except in text modes).
+
+     #+BEGIN_SRC emacs-lisp
+       (add-hook 'css-mode-hook 'paredit-mode)
+     #+END_SRC
+
+**** rainbow mode
+
+     And I want to see the colours I'm using.
+
+
+      #+BEGIN_SRC emacs-lisp
+        (add-hook 'css-mode-hook 'rainbow-mode)
+      #+END_SRC
+***** DONE rainbow-mode not working - fix it
+      - Note taken on [2014-12-20 Sat 11:11] \\
+        Did this by adding elpa.gnu.org to list of packages. Not sure what
+        affect that would have on the org problems i was having before so
+        added todo to check
+**** eldoc
+
+     And who doesn't want eldoc tips when they are editing things.
+
+     #+BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'css-eldoc)
+     #+END_SRC
+
+
+** markdown
+
+   I love org-mode, but lots of other systems use markdown, github
+   wiki pages being a very good example.
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'markdown-mode)
+   #+END_SRC
+
+*** Github Flavouring
+
+    I pretty much *always* want to do [[http://github.github.com/github-flavored-markdown/][github flavoured markdown]], so
+    let's just change that auto-mode-alist.
+
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'auto-mode-alist '(".md$" . gfm-mode))
+    #+END_SRC
+
+**** Github Flavoured Preview
+
+     We also need to change the preview as the standard preview
+     doesn't render github flavoured markdown correctly. I've
+     installed markdown Preview+ as a Chrome Extension and associated
+     .md files with Chrome on Mac OS X.
+
+     This is all a bit broken really, but will work for now. I'm sorry
+     that it is like this and I'm sure some day I'll fix it. This also
+     means that you use markdown-open rather than markdown-preview.
+
+     #+BEGIN_SRC emacs-lisp
+       (setq markdown-open-command "open")
+     #+END_SRC
+
+** wc-mode
+   - Note taken on [2014-12-20 Sat 09:50] \\
+     wc-mode also has some fun stuff around wordcount goals. Maybe this
+     would be a fun thing to try.
+
+How many words have I written? Great for procrastinating.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'wc-mode)
+(add-hook 'text-mode-hook
+               (lambda ()
+            (wc-mode 1)))
+#+END_SRC
+
+This sets a minimal wordcount display - total number of words and
+number of words that I haven't saved yet!
+#+BEGIN_SRC emacs-lisp
+(setq wc-modeline-format "[%tw(%w)w]")
+#+END_SRC
+
+
+** dutton-mode (nascent... it's not really a mode yet)
+
+This is available everywhere for now... basically calls a php server
+which someone has used to implement a translator (so I have to have
+that started). So bare bones
+
+
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'request)
+(require 'dutton)
+(global-set-key (kbd "C-c d") 'rapmotz-insert-translation)
+#+END_SRC
+
+[[http://stackoverflow.com/questions/25188206/how-do-you-write-an-emacs-lisp-function-to-replace-a-word-at-point][stackoverflow]]
+
+
+nu j p cheat o ji speedwords !
+
+
+* Org mode
+
+I am not as sophisticated as @otfrom in my use of orgmode (yet,
+ever?). But I am starting to put in a few tweaks here and there.
+
+Firstly is to go full-cream with latest orgmode (hopefully will pick
+up the one from the org elpa?).
+
+#+BEGIN_SRC emacs-lisp
+
+(maybe-install-and-require 'org)
+
+#+END_SRC
+
+** org-agenda
+
+It's only been a week and I have only scratched surface of what I can
+do with orgmode, but it's becoming indispensable. Particularly
+org-agenda.
+
+Anyway, I have all my relevant 'agenda' files in ~/Dropbox/gtd
+... actually if something in there is not a relevant agenda file then
+it shouldn't be in the folder!
+
+Update: this is not actually true any more. Going to manage the list
+of relevant files in my local config !
+
+
+Start the week on whatever day I am looking at.
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-start-on-weekday nil)
+
+#+END_SRC
+
+Mark stuff as 'seen' - a way of keeping track how long stuff stays
+around for
+
+#+BEGIN_SRC emacs-lisp
+
+ (defun mark-as-seen ()
+                 (interactive "P")
+                 (let* ((marker (or (org-get-at-bol 'org-hd-marker)
+                                    (org-agenda-error)))
+                        (buffer (marker-buffer marker)))
+                   (with-current-buffer buffer
+                     (save-excursion
+                       (save-restriction
+                         (widen)
+                         (goto-char marker)
+                         (org-back-to-heading t)
+                         (org-set-property "LAST_SEEN" (format-time-string "[%Y-%m-%d]")))))))
+
+
+#+END_SRC
+
+And set added at time in batch
+#+BEGIN_SRC emacs-lisp
+
+ (defun batch-added-at ()
+                 (interactive "P")
+                 (let* ((marker (or (org-get-at-bol 'org-hd-marker)
+                                    (org-agenda-error)))
+                        (buffer (marker-buffer marker)))
+                   (with-current-buffer buffer
+                     (save-excursion
+                       (save-restriction
+                         (widen)
+                         (goto-char marker)
+                         (org-back-to-heading t)
+                         (org-set-property "ADDED_AT" (format-time-string "[%Y-%m-%d]")))))))
+
+ (defun clear-priorities ()
+                 (interactive "P")
+                 (let* ((marker (or (org-get-at-bol 'org-hd-marker)
+                                    (org-agenda-error)))
+                        (buffer (marker-buffer marker)))
+                   (with-current-buffer buffer
+                     (save-excursion
+                       (save-restriction
+                         (widen)
+                         (goto-char marker)
+                         (org-back-to-heading t)
+                         (org-set-property "ADDED_AT" (format-time-string "[%Y-%m-%d]")))))))
+
+
+#+END_SRC
+*** Custom shortcut
+
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-x a") 'org-agenda)
+    #+END_SRC
+*** Get all tags
+#+BEGIN_SRC emacs-lisp
+
+
+(defun all-tags ()
+
+  (mapconcat 'identity
+             (mapcar (lambda (x) (setq res (tag-count x)) (if (not (string-match ": 0" res)) res))
+             (sort (mapcar
+                    (lambda (tag)
+                      (substring-no-properties (car tag)))
+                    (org-global-tags-completion-table))
+                   'string<))
+             "\n"))
+
+(defun agenda-all-tags (&optional org-match) "documentation…"
+
+       (org-agenda-prepare "all-tagz")
+        (insert (org-add-props "All tags and counts"
+			  nil 'face 'org-agenda-structure) "\n")
+       (insert (all-tags))
+(org-agenda-finalize)
+(setq buffer-read-only t))
+
+#+END_SRC
+*** Random todo
+From [[https://gist.github.com/tonyday567/4343164][gist]]
+#+BEGIN_SRC emacs-lisp
+
+
+(defun org-random-entry (&optional arg)
+    "Select and goto a random todo item from the global agenda"
+    (interactive "P")
+    (if org-agenda-overriding-arguments
+        (setq arg org-agenda-overriding-arguments))
+    (if (and (stringp arg) (not (string-match "\\S-" arg))) (setq arg nil))
+    (let* ((today (org-today))
+           (date (calendar-gregorian-from-absolute today))
+           (kwds org-todo-keywords-for-agenda)
+           (lucky-entry nil)
+           (completion-ignore-case t)
+           (org-agenda-buffer (when (buffer-live-p org-agenda-buffer)
+            org-agenda-buffer))
+           (org-select-this-todo-keyword
+            (if (stringp arg) arg
+              (and arg (integerp arg) (> arg 0)
+                   (nth (1- arg) kwds))))
+           rtn rtnall files file pos marker buffer)
+      (when (equal arg '(4))
+        (setq org-select-this-todo-keyword
+              (org-icompleting-read "Keyword (or KWD1|K2D2|...): "
+                                    (mapcar 'list kwds) nil nil)))
+      (and (equal 0 arg) (setq org-select-this-todo-keyword nil))
+      (catch 'exit
+        (org-compile-prefix-format 'todo)
+        (org-set-sorting-strategy 'todo)
+        (setq files (org-agenda-files nil 'ifmode)
+              rtnall nil)
+        (while (setq file (pop files))
+          (catch 'nextfile
+            (org-check-agenda-file file)
+            (setq rtn (org-agenda-get-day-entries file date :todo))
+            (setq rtnall (append rtnall rtn))))
+
+        (when rtnall
+          (setq lucky-entry
+                (nth (random
+                      (safe-length
+                       (setq entries rtnall)))
+                     entries))
+
+          (setq marker (or (get-text-property 0 'org-marker lucky-entry)
+                           (org-agenda-error)))
+          (setq buffer (marker-buffer marker))
+          (setq pos (marker-position marker))
+          (org-pop-to-buffer-same-window buffer)
+          (widen)
+          (goto-char pos)
+          (when (derived-mode-p 'org-mode)
+            (org-show-context 'agenda)
+            (save-excursion
+              (and (outline-next-heading)
+                   (org-flag-heading nil))) ; show the next heading
+            (when (outline-invisible-p)
+              (show-entry))                 ; display invisible text
+            (run-hooks 'org-agenda-after-show-hook))))))
+
+#+END_SRC
+
+*** Todo count
+#+BEGIN_SRC emacs-lisp
+(defun tag-count (tag)
+  (setq todo-only nil)
+  (setq matcher (org-make-tags-matcher (concat ":" tag ":"))
+	    match (car matcher) matcher (cdr matcher))
+
+ (setq files (org-agenda-files nil 'ifmode)
+	    rtnall nil)
+      (while (setq file (pop files))
+	(catch 'nextfile
+	  (org-check-agenda-file file)
+	  (setq buffer (if (file-exists-p file)
+			   (org-get-agenda-file-buffer file)
+			 (error "No such file %s" file)))
+	  (if (not buffer)
+	      ;; If file does not exist, error message to agenda
+	      (setq rtn (list
+			 (format "ORG-AGENDA-ERROR: No such org-file %s" file))
+		    rtnall (append rtnall rtn))
+	    (with-current-buffer buffer
+	      (unless (derived-mode-p 'org-mode)
+		(error "Agenda file %s is not in `org-mode'" file))
+	      (save-excursion
+		(save-restriction
+		  (if (eq buffer org-agenda-restrict)
+		      (narrow-to-region org-agenda-restrict-begin
+					org-agenda-restrict-end)
+		    (widen))
+		  (setq rtn (org-scan-tags 'org-get-tags-string matcher todo-only))
+		  (setq rtnall (append rtnall rtn))
+
+                  ))))))
+      (concat tag ": " (number-to-string (length rtnall))))
+
+#+END_SRC
+*** Luna phases in agenda
+from: http://orgmode.org/worg/org-hacks.html#unnumbered-107
+
+#+BEGIN_SRC emacs-lisp
+
+
+(require 'cl-lib)
+
+(org-no-warnings (defvar date))
+(defun org-lunar-phases ()
+  "Show lunar phase in Agenda buffer."
+  (require 'lunar)
+  (let* ((phase-list (lunar-phase-list (nth 0 date) (nth 2 date)))
+         (phase (cl-find-if (lambda (phase) (equal (car phase) date))
+                            phase-list)))
+    (when phase
+      (setq ret (concat (lunar-phase-name (nth 2 phase)) " "
+                        (substring (nth 1 phase) 0 5))))))
+
+#+END_SRC
+
+*** category headers color
+#+BEGIN_SRC emacs-lisp
+
+(add-hook 'org-finalize-agenda-hook
+          (lambda ()
+            (save-excursion
+              (color-org-header "PublicHolidays:"  "yellow1")
+              (color-org-header "AnnualLeave:"  "yellow1")
+              (color-org-header "Weekend:"  "yellow1")
+              (color-org-header "WorkDay:"  "firebrick3")
+               )))
+
+(defun color-org-header (tag col)
+  ""
+  (interactive)
+  (goto-char (point-min))
+  (while (re-search-forward tag nil t)
+(add-text-properties (match-beginning 0) (match-end 0)
+                         `(face (:weight bold)))
+(add-text-properties (match-beginning 0) (line-end-position)
+                         `(face (:foreground ,col)))
+ ))
+
+#+END_SRC
+
+#+RESULTS:
+: color-org-header
+
+*** Exporting periodically
+Via [[http://superuser.com/questions/700665/export-org-agenda-views-periodically-in-emacs][stackoverflow]]
+#+BEGIN_SRC emacs-lisp
+(defun run-agenda-store ()
+  ""
+(interactive)
+  (org-save-all-org-buffers)
+  (org-batch-store-agenda-views)
+  (message "Agenda exported!!!!"))
+
+
+#+END_SRC
+
+#+RESULTS:
+: run-agenda-store
+
+*** Finish a day's review
+
+#+BEGIN_SRC emacs-lisp
+
+(defun finish-review ()
+(interactive)
+(shell-command-to-string
+  (concat "git commit -am 'Finishing review for " (format-time-string "%F") "'"))
+(run-agenda-store))
+#+END_SRC
+
+** org-mobile
+
+Started using org-mobile to bring some level of ahem mobility to my
+org agenda stuff. Early days, but so far, so good.
+
+#+BEGIN_SRC  emacs-lisp
+
+(setq org-id-locations-file "~/.emacs.d/private/.org-id-locations")
+(setq org-mobile-directory "~/Dropbox/gtd/mobileorg")
+(setq org-mobile-inbox-for-pull "~/Dropbox/gtd/from-mobileorg")
+(setq org-directory "~/Dropbox/gtd")
+#+END_SRC
+** org-refile
+
+I recently discovered refile. It's pretty cool and I use it a lot (or
+I did in the making of this document anyway. Appreciate being able to
+knock stuff out of the way without messing around and switching
+context. Anyway, this little snippet will set the targets for refile
+to include anything in current buffer at level heading 3 or
+higher. Also adds in the ability to create new parent nodes too when refiling.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets (quote (
+                                  (org-agenda-files :maxlevel . 3)
+                                  (nil :maxlevel . 2)) ))
+(setq org-refile-allow-creating-parent-nodes t)
+#+END_SRC
+
+** org-stuck-projects
+
+This is quite a useful agenda view that allows you to see what
+'projects' (in gtd sense I guess) don't have any actions associated
+with them.
+
+What I have as 'projects' are level 2 and tagged project right
+now. Also being 'unstuck' means having a task under them that is
+either todo/waiting/appt (appointment).
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-stuck-projects
+   (quote
+    ("project+LEVEL=2"
+     ("TODO" "WAITING" "APPT")
+     nil "")))
+
+#+END_SRC
+
+** Logging
+
+Log it all (with a draw for notes)
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-log-into-drawer t)
+(setq org-log-done 'time)
+
+#+END_SRC
+
+
+** org-capture
+
+Borrowed from [[http://doc.norang.ca/org-mode.html][here]]. This sets the default notes file for capture to
+something suitable useful. Also binds it to a custom key that I am now
+used to using.
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file "~/Dropbox/gtd/refile.org")
+
+(global-set-key (kbd "C-c c") 'org-capture)
+#+END_SRC
+
+Finally finish by setting up a really rubbish basic capture
+template. I would like to add more but then I really wouldn't be
+getting things done.
+#+BEGIN_SRC emacs-lisp
+
+(setq org-capture-templates
+   (quote
+    (("c" "collect for processing" entry
+      (file "~/Dropbox/gtd/refile.org")
+      "* %^{wat} \n %U" :prepend t :immediate-finish t))))
+
+#+END_SRC
+
+
+** org-journal
+
+Using a LOT now - so shortcut it
+#+BEGIN_SRC emacs-lisp
+(setq org-journal-dir "~/Dropbox/orgjournal/")
+      (global-set-key (kbd "C-x j") 'org-journal-new-entry)
+#+END_SRC
+
+
+** org-icalendar
+Sort of publish it - will do on save later
+
+** tags
+
+Tags can inherit from their parents - good for lazy people.
+#+BEGIN_SRC emacs-lisp
+(setq org-use-tag-inheritance t)
+#+END_SRC
+From [[http://stackoverflow.com/questions/24330980/enumerate-all-tags-in-org-mode][stackoverflow]] - not put anywhere useful yet but good to have around
+
+#+BEGIN_SRC emacs-lisp
+
+(defun get-tag-counts ()
+  (interactive)
+  (let ((all-tags '()))
+    (org-map-entries
+     (lambda ()
+       (let ((tag-string (car (last (org-heading-components)))))
+     (when tag-string
+       (setq all-tags
+         (append all-tags (split-string tag-string ":" t)))))))
+
+
+    ;; now get counts
+(message "RESULT: "
+    (loop for tag in (-uniq all-tags)
+      collect (cons tag (cl-count tag all-tags :test 'string=))))))
+
+
+#+END_SRC
+
+Uses current context to show tags
+#+BEGIN_SRC emacs-lisp
+(defun todo-tags-at-point ()
+  "show tags for word at point"
+  (interactive)
+  (let* ((bounds (if (use-region-p)
+                     (cons (region-beginning) (region-end))
+                   (bounds-of-thing-at-point 'word)))
+         (text  (when bounds  (buffer-substring-no-properties (car bounds) (cdr bounds)))))
+    (when text
+      (org-tags-view 0 text))))
+(defun tags-at-point ()
+  "show tags for word at point"
+  (interactive)
+  (let* ((bounds (if (use-region-p)
+                     (cons (region-beginning) (region-end))
+                   (bounds-of-thing-at-point 'word)))
+         (text  (when bounds  (buffer-substring-no-properties (car bounds) (cdr bounds)))))
+    (when text
+      (org-tags-view nil text))))
+(global-set-key (kbd "C-x t") 'todo-tags-at-point)
+
+#+END_SRC
+
+#+RESULTS:
+: todo-tags-at-point
+
+** org-attach
+
+I like using org attach to manage files . This sets up the cutoff
+before we use git annex for attachments and the default method to move:
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-attach-git-annex-cutoff 10000)
+(setq org-attach-method (quote mv))
+
+#+END_SRC
+
+** org-babel
+Enable shell as well as the default of emacs-lisp.
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh . t)
+   (emacs-lisp . t)
+   ))
+#+END_SRC
+** epic
+Evernote picker / exporter
+
+#+BEGIN_SRC emacs-lisp
+
+(maybe-install-and-require 'epic)
+
+
+#+END_SRC
+
+** org-ref
+
+Citations
+
+#+BEGIN_SRC emacs-lisp
+
+  (maybe-install-and-require 'org-ref)
+
+  (setq reftex-default-bibliography '("~/Dropbox/bibliography/references.bib"))
+
+  ;; see org-ref for use of these variables
+  (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
+        org-ref-default-bibliography '("~/Dropbox/bibliography/references.bib")
+        org-ref-pdf-directory '("~/Dropbox/bibliography/bibtex-pdfs/"))
+
+  (setq helm-bibtex-bibliography "~/Dropbox/bibliography/references.bib")
+  (setq helm-bibtex-library-path "~/Dropbox/bibliography/bibtex-pdfs")
+
+  ;; open pdf with system pdf viewer (works on mac)
+  (setq helm-bibtex-pdf-open-function
+    (lambda (fpath)
+      (start-process "open" "*open*" "open" fpath)))
+
+  ;; alternative
+  ;; (setq helm-bibtex-pdf-open-function 'org-open-file)
+
+
+
+#+END_SRC
+
+** org-src
+
+#+BEGIN_SRC emacs-lisp
+
+(setq org-src-fontify-natively t)
+
+#+END_SRC
+
+
+* Programming Modes
+** prog-mode
+
+   prog-mode and the prog-mode-hook are at the basis of most of the
+   programming modes in emacs. If we want something set up for
+   everything we should do it here.
+
+*** Parentheses
+**** Show Them
+
+     We really want to see those parentheses.
+
+    #+BEGIN_SRC emacs-lisp
+       (show-paren-mode +1)
+     #+END_SRC
+
+*** rainbow-delimiters
+
+    Make those delimiters glow with wacky colors so we can see what is
+    going on.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'rainbow-delimiters)
+      (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+    #+END_SRC
+
+*** rainbow mode
+
+    If we have a color literal it is really nice to have an idea of
+    what it is going to look like. This is *really* useful in things
+    like editing CSS files with hex color codes.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'rainbow-mode)
+      (add-hook 'prog-mode-hook 'rainbow-mode)
+      (diminish 'rainbow-mode)
+    #+END_SRC
+*** whitespcae-mode
+
+Show whitespace
+
+#+BEGIN_SRC emacs-lisp
+      (add-hook 'prog-mode-hook 'whitespace-mode)
+
+#+END_SRC
+*** highlight-symbol
+
+    I like to see all of the places I'm using the same symbol. This is
+    a great visual cue for those times where you've mistyped a variable
+    for function name. It isn't quite flymake, but it is handy. It is
+    good to see where something is used as well.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'highlight-symbol)
+      (add-hook 'prog-mode-hook 'highlight-symbol-mode)
+    #+END_SRC
+
+*** Flycheck mode
+
+This is a pretty handy syntax checker - you have to make sure the
+relevant syntax checker for the current major mode is installed but
+it's nice and obvious from flycheck-verify-setup what you need. I
+mainly use for json right now but will enable it on all prog modes (diminised).
+
+#+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'flycheck)
+      (add-hook 'prog-mode-hook 'flycheck-mode)
+      (diminish 'flycheck-mode)
+
+#+END_SRC
+
+** color-identifiers-mode
+
+    This is a suggestion from @sw1nn.
+
+    jen: no idea...
+
+    #+BEGIN_SRC emacs-lisp
+
+      (maybe-install-and-require 'color-identifiers-mode)
+      (global-color-identifiers-mode t)
+      (diminish 'color-identifiers-mode)
+
+    #+END_SRC
+
+** yasnippet
+
+I haven't really used yasnippet very much. I am going to bolt in some
+common language snippets and see if that encourages me.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'yasnippet)
+    #+END_SRC
+
+*** Snippet Directory
+
+     We need a place to add our snippets for each mode as well. We'll
+     put that in snippets.
+
+     #+BEGIN_SRC emacs-lisp
+       (setq yas/root-directory (concat user-emacs-directory "snippets"))
+     #+END_SRC
+
+*** Turn it on globally
+
+    And we want to add yasnippets to all modes where we have snippets.
+
+    #+BEGIN_SRC emacs-lisp
+      (yas-global-mode 1)
+    #+END_SRC
+
+*** Diminish it
+
+     I don't need to see it everywhere though.
+
+     #+BEGIN_SRC emacs-lisp
+       (diminish 'yas-minor-mode)
+     #+END_SRC
+
+*** Add some useful snippets
+
+A few packages out there for languages I should think about including:
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'clojure-snippets)
+
+#+END_SRC
+
+Well... ok just one right now.
+
+** smartscan
+
+    A suggestion from [[http://www.masteringemacs.org/articles/2011/01/14/effective-editing-movement/][Effective Editing]] in [[http://www.masteringemacs.org/][Mastering Emacs]]. This
+    allows you to go to the next identifier like the one you are
+    currently on by using M-n and M-p.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'smartscan)
+      (add-hook 'prog-mode-hook
+                '(lambda () (smartscan-mode 1)))
+    #+END_SRC
+
+
+** lisp modes
+
+
+*** lisp hooks
+
+    These are the common lisp hooks we want shared across all lisp
+    modes.
+
+    #+BEGIN_SRC emacs-lisp
+            (setq lisp-hooks (lambda ()
+                               (eldoc-mode +1)
+                               (diminish 'eldoc-mode)
+                               (define-key paredit-mode-map
+                                 (kbd "{") 'paredit-open-curly)
+                               (define-key paredit-mode-map
+                                 (kbd "}") 'paredit-close-curly)))
+    #+END_SRC
+
+**** paredit-mode
+
+     paredit-mode is a strange one. When you first use it, you will
+     hate it. You'll hate the way it won't let you do the things
+     you *think* you want to do. Once you get used to it though you
+     wonder how you ever did any programming without it.
+
+     After suffering with paredit enabled ruby buffers for too long I
+     have moved this into the lispmodehooks :)
+
+ #+BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'paredit)
+       (diminish 'paredit-mode "()")
+       (add-hook 'lisp-hooks 'paredit-mode)
+     #+END_SRC
+
+
+*** emacs-lisp
+
+**** lisp-mode-hook
+
+     Let's add the lisp mode hook to the emacs-lisp-mode
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (add-hook 'emacs-lisp-mode-hook lisp-hooks)
+     #+DONT_END_SRC
+
+*** clojure
+
+    I do *love* coding in clojure. The tool chain has been evolving
+    quite a bit over the last few years.
+
+    Everything has gone from being built only with maven to maven
+    being just for core and everything else being done with [[http://leiningen.org/][Leiningen]].
+
+    On the emacs side we've gone from the swank and slime, to nrepl
+    and nrepl.el, to now we have nrepl and cider.el. Trying to move to
+    cider.el is what caused me to declare .emacs.d bankruptcy this
+    time and restructure everything.
+
+    Most of the clojure emacs goodness if available in the github
+    repo called [[https://github.com/clojure-emacs][clojure-emacs]].
+
+**** cider
+
+     You can get most of the clojure support by just elpa installing
+     cider.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'cider)
+
+     #+DONT_END_SRC
+
+     Adding clojure-test-mode is a good idea too. Lots of things out
+     there using the built in clojure.test.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'clojure-test-mode)
+     #+DONT_END_SRC
+
+     We'll also want to get our lisp-hooks into our clojurey
+     goodness. It would be a shame to not have it here.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (add-hook 'clojure-mode-hook lisp-hooks)
+     #+DONT_END_SRC
+
+     Have not figured out why this doesn't already happen
+     #+DONT_BEGIN_SRC
+       (add-hook 'clojure-mode-hook' cider-mode)
+     #+DONT_END_SRC
+
+     There are more things that we'll want that are specific to cider
+     mode and the cider interaction buffer.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+       (add-hook 'cider-interaction-mode-hook 'cider-turn-on-eldoc-mode)
+     #+DONT_END_SRC
+
+     We also want to save the history of our interactions. There might
+     be gold there.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (setq cider-history-file (concat user-emacs-directory "cider-history"))
+     #+DONT_END_SRC
+
+     I also want to be able to navigate to the "-" characters in words.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (add-hook 'cider-mode-hook 'subword-mode)
+     #+DONT_END_SRC
+#+BEGIN_SRC
+(setq cider-cljs-lein-repl
+      "(do (user/go)
+      (user/cljs-repl))")
+
+#+END_SRC
+
+**** helm and clojure
+
+     Kris Jenkins has a great helm-clojure-headlines that I'd like to
+     bind to s-h when in clojure-mode.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (defun helm-clojure-headlines ()
+         "Display headlines for the current Clojure file."
+         (interactive)
+         (helm :sources '(((name . "Clojure Headlines")
+                           (volatile)
+                           (headline "^[;(]")))))
+
+       (add-hook 'clojure-mode-hook
+                 (lambda () (local-set-key (kbd "s-h") 'helm-clojure-headlines)))
+     #+DONT_END_SRC
+
+**** Clojure Cheat Sheet
+
+     It was this helm addon from Kris Jenkins that made me start to
+     look at helm. And having the clojure cheat sheet to hand is
+     useful.
+
+     I like binding cheatsheets to s-f9.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'clojure-cheatsheet)
+       (add-hook 'clojure-mode-hook
+                 (lambda () (local-set-key [s-f1] 'clojure-cheatsheet)))
+     #+DONT_END_SRC
+
+** puppet
+... unfortunately
+
+    #+DONT_BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'puppet-mode)
+    #+DONT_END_SRC
+
+** pastebins
+
+   gist, pastebin, refheap. All good ways of sharing snippets of code
+   with people on irc or similar.
+
+*** refheap
+
+    I like [[http://refheap.com][refheap]] and Anthony Grimes seems like a nice guy. And it
+    is built in clojure.
+
+    #+DONT_BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'refheap)
+    #+DONT_END_SRC
+
+
+** lisp modes
+
+   emacs-lisp and clojure are the two that really go in here for now,
+   though in the future scheme and common lisp could be added.
+
+*** lisp hooks
+
+    These are the common lisp hooks we want shared across all lisp
+    modes.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq lisp-hooks (lambda ()
+                         (eldoc-mode +1)
+                         (diminish 'eldoc-mode)
+                         (define-key paredit-mode-map
+                           (kbd "{") 'paredit-open-curly)
+                         (define-key paredit-mode-map
+                           (kbd "}") 'paredit-close-curly)
+                         (local-set-key (kbd "C-;") 'comment-dwim)))
+    #+END_SRC
+
+*** emacs-lisp
+
+**** lisp-mode-hook
+
+     Let's add the lisp mode hook to the emacs-lisp-mode
+
+     #+BEGIN_SRC emacs-lisp
+       (add-hook 'emacs-lisp-mode-hook lisp-hooks)
+     #+END_SRC
+
+**** Pop Up Help in Emacs Lisp
+
+     Thx again to [[http://twitter.com/krisajenkins][Kris Jenkins]] and his [[http://blog.jenkster.com/2013/12/popup-help-in-emacs-lisp.html][blog post]] I've got even yet
+     more help with emacs-lisp functions in a popup just like in ac
+     stuff in clojure modes. Thanks to [[http://twitter.com/sanityinc][Steve Purcell]] we have an
+     improved version that gets faces and vars in addition to
+     functions, so in some ways it is even a bit better than what is
+     available in cider/clojure-mode (from my understanding anyway).
+
+     #+BEGIN_SRC emacs-lisp
+       (require 'popup)
+
+       (defun describe-thing-in-popup ()
+         (interactive)
+         (let* ((thing (symbol-at-point))
+                (help-xref-following t)
+                (description (with-temp-buffer
+                               (help-mode)
+                               (help-xref-interned thing)
+                               (buffer-string))))
+           (popup-tip description
+                      :point (point)
+                      :around t
+                      :height 30
+                      :scroll-bar t
+                      :margin t)))
+     #+END_SRC
+
+***** The usual help keybinding
+
+      Let's use C-c C-d for describing functions at point as this is
+      the binding in cider/nrepl that I'm used to. We'll probably do
+      this in other modes as well so we'll make it a local keybinding
+      and then it will more or less [[http://en.wikipedia.org/wiki/DWIM][dwim]].
+
+      #+BEGIN_SRC emacs-lisp
+        (add-hook 'emacs-lisp-mode-hook
+                  (lambda () (local-set-key (kbd "C-c C-d") 'describe-thing-in-popup)))
+      #+END_SRC
+
+*** clojure
+
+    I do *love* coding in clojure. The tool chain has been evolving
+    quite a bit over the last few years.
+
+    Everything has gone from being built only with maven to maven
+    being just for core and everything else being done with [[http://leiningen.org/][Leiningen]].
+
+    On the emacs side we've gone from the swank and slime, to nrepl
+    and nrepl.el, to now we have nrepl and cider.el. Trying to move to
+    cider.el is what caused me to declare .emacs.d bankruptcy this
+    time and restructure everything.
+
+    Most of the clojure emacs goodness if available in the github
+    repo called [[https://github.com/clojure-emacs][clojure-emacs]].
+
+**** cider
+
+***** install
+
+      You can get most of the clojure support by just elpa installing
+      cider.
+
+      #+BEGIN_SRC emacs-lisp
+        (maybe-install-and-require 'cider)
+        (diminish 'cider-mode "Cλ")
+      #+END_SRC
+
+***** Popup compilation messages
+
+      Don't pop them up if I'm not in the repl buffer otherwise I
+      might go all Bruce Banner on you.
+
+      #+BEGIN_SRC emacs-lisp
+        (setq cider-popup-stacktraces t)
+      #+END_SRC
+
+***** clojure-mode-hook
+
+      We'll also want to get our lisp-hooks into our clojurey
+      goodness. It would be a shame to not have it here.
+
+      #+BEGIN_SRC emacs-lisp
+        (add-hook 'clojure-mode-hook lisp-hooks)
+      #+END_SRC
+
+***** cider-mode-hooks
+
+      There are more things that we'll want that are specific to cider
+      mode and the cider interaction buffer.
+
+      #+BEGIN_SRC emacs-lisp
+        (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+        (add-hook 'cider-interaction-mode-hook 'cider-turn-on-eldoc-mode)
+      #+END_SRC
+
+***** Save cider history
+
+      We also want to save the history of our interactions. There might
+      be gold there.
+
+      #+BEGIN_SRC emacs-lisp
+        (setq cider-repl-history-file (concat user-emacs-directory "cider-history"))
+      #+END_SRC
+
+***** subword-mode
+
+      I also want to be able to navigate to the "-" characters in words.
+
+      #+BEGIN_SRC emacs-lisp
+        (add-hook 'cider-mode-hook 'subword-mode)
+      #+END_SRC
+
+***** autocomplete
+
+      Popup autocomplete always looks cool and it helps sometimes too.
+
+      We used to have ac-nrepl here, but company is the supported
+      thing in cider now and we've loaded that above.
+
+      #+BEGIN_SRC emacs-lisp
+        (setq company-idle-delay 0.5)
+        (setq company-tooltip-limit 10)
+        (setq company-minimum-prefix-length 2)
+        (setq company-tooltip-flip-when-above t)
+      #+END_SRC
+
+***** compojure indentation rules
+
+      A number of things in compojure don't really indent
+      correctly. There are some instructions for fixing that [[https://github.com/weavejester/compojure/wiki/Emacs-indentation][here]].
+
+      #+BEGIN_SRC emacs-lisp
+        (define-clojure-indent
+          (defroutes 'defun))
+      #+END_SRC
+
+***** component
+
+      I keep typing (go) when I should be typing (reset). Maybe a
+      hotkey will keep me out of trouble.
+
+      #+BEGIN_SRC emacs-lisp
+        (defun cider-system-reset ()
+          (interactive)
+          (cider-interactive-eval
+           "(user/reset)"))
+
+        (define-key clojure-mode-map (kbd "s-r") 'cider-system-reset)
+      #+END_SRC
+
+***** Don't destroy that repl buffer while pretty printing
+
+      It can be very frustrating to be poking away at clojure data
+      structures in the repl and then accidentally print a big, or
+      worse and infinite sequence. This should stop that.
+
+      #+BEGIN_SRC emacs-lisp
+        (setq cider-repl-print-length 100)
+      #+END_SRC
+
+      And seeing as we are limiting what we print, we should pretty
+      print by default.
+
+      #+BEGIN_SRC emacs-lisp
+        ;; (setq cider-repl-use-pretty-printing t)
+      #+END_SRC
+
+***** A few repl tweaks
+
+      I want paredit, rainbow delimiters and clojure-mode highlighting
+      in my repl buffer.
+
+      #+BEGIN_SRC emacs-lisp
+        (setq cider-repl-use-clojure-font-lock t)
+;;        (add-hook 'cider-repl-mode-hook 'paredit-mode)
+        (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+      #+END_SRC
+
+**** Alignment Changes
+
+     There are very few bits of alignment that I would *ever* do
+     differently from how emacs does it by default. Sometimes though
+     the language moves faster than the modes that support it, or we
+     have house rule (like let alignment).
+
+     All formatting, beyond remaining consistent it a file, is
+     fundamentally arbitrary and arguments about it descend into
+     [[http://c2.com/cgi/wiki?BikeShed][bikeshedding]] very quickly. Here are our rules
+
+***** align let forms
+
+      Pretty alignment of let, when-let, if-let, binding, loop,
+      with-open, literal hashes {}, defroute, cond, and condp
+      (except :>> subforms). This is partly to keep things formatted
+      the same way as Neale Swinnerton.
+
+      #+BEGIN_SRC emacs-lisp
+        (maybe-install-and-require 'align-cljlet)
+      #+END_SRC
+
+***** Indentation Override
+
+      At the moment, indenting go loops like defn's is the only extra
+      bit of overriding we do.
+
+      #+BEGIN_SRC emacs-lisp
+        (put-clojure-indent 'go-loop 'defun)
+      #+END_SRC
+
+**** clj-refactor
+
+     Lots of cool little time savers in here.
+
+     #+BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'clj-refactor)
+     #+END_SRC
+
+**** clojurescript
+
+     Get those cljs files building automatically and get the errors
+     popping up in your emacs.
+
+     #+BEGIN_SRC emacs-lisp
+       (maybe-install-and-require 'cljsbuild-mode)
+     #+END_SRC
+
+**** helm and clojure
+
+     Kris Jenkins has a great helm-clojure-headlines that I'd like to
+     bind to s-h when in clojure-mode.
+
+     #+DONT_BEGIN_SRC emacs-lisp
+       (defun helm-clojure-headlines ()
+         "Display headlines for the current Clojure file."
+         (interactive)
+         (helm :sources '(((name . "Clojure Headlines")
+                           (volatile)
+                           (headline "^[;(]")))))
+
+       (add-hook 'clojure-mode-hook
+                 (lambda () (local-set-key (kbd "s-h") 'helm-clojure-headlines)))
+     #+DONT_END_SRC
+
+**** sw1nn-cider-perspective or Engineering
+
+     I really like what Neale has done to set up a quick cider
+     perspective. I just don't like what he called it. ;-)
+
+     #+BEGIN_SRC emacs-lisp
+       (defun sw1nn-nrepl-current-server-buffer ()
+         (let ((nrepl-server-buf (replace-regexp-in-string "connection" "server" (nrepl-current-connection-buffer))))
+           (when nrepl-server-buf
+             (get-buffer nrepl-server-buf))))
+
+       (defun sw1nn-cider-perspective ()
+         (interactive)
+         (delete-other-windows)
+         (split-window-below)
+         (windmove-down)
+         (shrink-window 25)
+         (switch-to-buffer (sw1nn-nrepl-current-server-buffer))
+         (end-of-buffer)
+         (windmove-up)
+         (pop-to-buffer (cider-find-or-create-repl-buffer)))
+     #+END_SRC
+
+** python
+** javascript
+
+   According to [[http://twitter.com/sw1nn][Neale Swinnerton]] js2-mode is the way to go.
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'js2-mode)
+     (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+   #+END_SRC
+
+   And we can hook it in to run node.js shell scripts as well.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+   #+END_SRC
+
+** elasticsearch
+
+   Who knew you could poke elasticsearch from inside emacs. :-D
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'es-mode)
+     (add-to-list 'auto-mode-alist '("\\.es$" . es-mode))
+   #+END_SRC
+
+** C#
+I cut my teeth on csharp development. It was the first 'modern'
+language I think I learnt (please don't ask me what modern
+means... it's all relative innit). Anyway, recently I have been having
+to read over but thankfully not edit a whole lot of csharp code. I
+value my time and patience so using VisualStudio on a VM or remote
+instance is something I try and avoid.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'csharp-mode)
+#+END_SRC
+
+** ruby
+
+Through circumstance, ruby right now is becoming my default. Even
+though I love Clojure, the environement I am in involves a lot of
+scripting. So let's bring on the ruby stuff.
+
+*** DONE rspec-mode
+
+Again not sure what this adds - I recall there is a useful jump/insert
+spec/implementation type command. I guess I can explore next time I am in
+rspec.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'rspec-mode)
+#+END_SRC
+
+*** DONE ruby-mode
+
+I seem to recall this now picks up Rakefile/Gemfile type files
+automatically. Otherwise can customise here.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'ruby-mode)
+#+END_SRC
+
+** dockerfile-mode
+
+I can't remember why I want this, but I have definitely been using
+docker a little bit more these days. I do try and mode all my code :)
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'dockerfile-mode)
+#+END_SRC
+
+
+** R
+
+Oh yeah... I totally does the DataSciences. Or maybe I use R as a less
+crap replacement for Excel. You decide. Either way, the repl-yness of
+R means we can do good things with it.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'ess)
+(require 'ess-site)
+#+END_SRC
+
+
+** Bash
+
+Have shell-script mode by default, just want to diminish it.... or the
+major-mode equivalent.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'sh-mode-hook
+  (lambda()
+    (setq mode-name "sh-script")))
+#+END_SRC
+
+** pastebins
+
+   gist, pastebin, refheap. All good ways of sharing snippets of code
+   with people on irc or similar.
+
+*** gist
+
+    As you probably already have a github account, having gist as a
+    way of sharing code snippets is a good idea.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'gist)
+    #+END_SRC
+
+*** refheap
+
+    I like [[http://refheap.com][refheap]] and Anthony Grimes seems like a nice guy. And it
+    is built in clojure.
+
+    #+BEGIN_SRC emacs-lisp
+      (maybe-install-and-require 'refheap)
+    #+END_SRC
+
+
+** Frink
+
+Hmm
+
+#+BEGIN_SRC emacs-lisp
+
+(require 'frink-mode)
+
+#+END_SRC
+* Data Modes
+
+  Some things aren't really text and aren't really source code
+  files. We'll deal with them below.
+
+** csv-mode
+
+   Lots of great things for sorting, unsorting, munging and editing
+   csv files.
+
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'csv-mode)
+   #+END_SRC
+
+** graphviz-dot-mode
+
+Is this a text format? Or a data format? For some bizarre reason, I
+tend to do a lot of note taking in dot mode for graphs and stuff like
+that.
+
+#+BEGIN_SRC emacs-lisp
+(maybe-install-and-require 'graphviz-dot-mode)
+
+#+END_SRC
+
+
+** json
+
+I have installed this but never used it... wondering if it is worth
+keeping around. Will see :)
+
+#+BEGIN_SRC emacs-lisp
+ (maybe-install-and-require 'json-snatcher)
+#+END_SRC
+
+I seem to edit too much json for my liking. Would like to get code
+folding working eventually too. Let's have a crack:
+
+#+BEGIN_SRC emacs-lisp
+
+(add-hook 'js-mode-hook
+  (lambda()
+    (local-set-key (kbd "C-c <right>") 'hs-show-block)
+    (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+    (hs-minor-mode t)))
+
+#+END_SRC
+* Notification Systems
+
+** The great eye of Sauron
+
+   With all these various systems going on we probably want to be able
+   to have a log of what has happened so we can step through
+   it. Sauron should help us with this. I'm sure nothing can go
+   wrong. I feel so powerful that it must be right.
+
+   #+BEGIN_SRC emacs-lisp
+     (maybe-install-and-require 'sauron)
+   #+END_SRC
+
+*** dbus hacks
+
+    If we want new mail notifications with sauron as described [[http://www.djcbsoftware.nl/code/mu/mu4e/Getting-new-mail-notifications-with-Sauron.html][here]],
+    then we apparently need to turn the dbus cookie on.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq sauron-dbus-cookie t)
+    #+END_SRC
+
+
+* Local Config
+** custom.el
+
+   custom.el is great for configuring things through that "gui" in
+   emacs, but it is a real pain when it drops junk in your [[../init.el][init.el]] and
+   messes up your pretty config and git history and is stuff that you
+   don't want to leak out on to github. You can change the location of
+   this file though and I like to do this.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq custom-file "~/.emacs.d/local/custom.el")
+     (load-if-exists custom-file)
+   #+END_SRC
+
+
+* Finishing
+
+
+* Misc stuffs
+
+Thankfully empty
+
+
+* Inspiration
+
+I have totally ripped off most of this approach from @otfrom ... but
+they say imitation is the sincerest form of flattery.
+
+Everything in quotes is directly attributed to the @otfrom. Other ramblings are probably my own.
+
+Stay classy!
+
+77777777777777777777777777777777777I777777777777777777
+77777777777777777777777?,.,:~??77777777777777777777777
+77777777777777777777777~.......=+II7777777777777777777
+7777777777777777777::~===:=::.....~7777777777777777777
+77777777777777777=......:::.,.......=77777777777777777
+7777777777777777=........:::=====::::...77777777777777
+7777777777777777..........:~=====+++++=.77777777777777
+7777777777777777....,:...,~=======+++++I77777777777777
+7777777777777777....:..,::~========++++777777777777777
+7777777777777777...,:,,:::=========++++777777777777777
+7777777777777777I...:.,:::==:.....:=+~.~77777777777777
+7777777777777777I....:.:~==::......~+..,77777777777777
+77777777777777777....::::::====~~=::+~.I77777777777777
+77777777777777777~.:=:::~~=====+=~::++++77777777777777
+777777777777777777I.::::::::::==:,=~=+.~77777777777777
+7777777777777777777+.::::::~::.:......,~77777777777777
+77777777777777777777..:::::=:~...,:~,::777I77777777777
+77777777777777777777..::::::=::::====:I777777777777777
+7777777777777777777?.::::::::::::,..::7777777777777777
+7777777777777777777.::::::::::...:==:?+777777777777777
+777777777777777??,.:::::::::::......=++++?777777777777
+777777777777.7:=...~::::::::::::====++~.::I+7777777777
+7777I.,77=+=..=:....::::::::::::=,.==+++:.++++++777777
+777:,..+,?===,.,..............,.....=~++:.++++.=+++777
+7+,:::..,.............:...::::.....=.~?+:..++,++=,++77
+7....::,.,.,....::::,.::,,:::::..,+?+I?+=...:~+==+=.,7
+
+
+
+
+
+
+
+* Questionable packages
+
+  Some stuff that I had before that I don't know if I need
+
+** package emoji-display
+** package json-snatcher
+** package n-mode
+** package session
+
+
+
+* Questionable things
+
+These are commented out (essentially) customizations from my local
+custom.el file that I am not sure why I set. If I need them... this is
+where they are.
+
+
+
+* Custom.el stuff I havent filed but would like in source control
+
+
+Borrowed from a gh that doesn'tseem to be there no more
+#+BEGIN_SRC emacs-lisp
+
+(defun holiday-christmas-bank-holidays ()
+  (let ((m displayed-month)
+        (y displayed-year))
+    (increment-calendar-month m y -1)
+    (when (>= m 10)
+      (let ((d (calendar-day-of-week (list 12 25 y))))
+        (cond ((= d 5)
+               (list (list (list 12 28 y)
+                           "Boxing Day Bank Holiday")))
+              ((= d 6)
+               (list (list (list 12 27 y)
+                           "Boxing Day Bank Holiday")
+                     (list (list 12 28 y)
+                           "Christmas Day Bank Holiday")))
+              ((= d 0)
+               (list (list (list 12 27 y)
+                           "Christmas Day Bank Holiday"))))))))
+
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+
+(custom-set-variables
+
+ '(calendar-holidays
+   (quote
+    ((holiday-fixed 1 1 "New Year's Day")
+     (holiday-easter-etc)
+     (holiday-float 3 1 2 "Labour Day (Australia)")
+     (holiday-float 1 1 4  "Australia Day")
+     (holiday-fixed 12 25 "Christmas")
+     (holiday-float 6 0 2 "Queen's birthday")
+     (holiday-float 11 2 1 "Melbourne cup day")
+                            )))
+ '(org-agenda-bulk-custom-functions (quote ((66 batch-added-at))))
+
+ '(org-agenda-default-appointment-duration 20)
+ '(org-agenda-log-mode-add-notes nil)
+ '(org-agenda-start-on-weekday nil)
+ '(org-archive-location "archives/%s_archive::")
+ '(org-attach-directory "~/Dropbox/orgattatchdata/")
+ '(org-attach-git-annex-cutoff 10000)
+ '(org-attach-method (quote mv))
+ '(org-deadline-warning-days 5)
+ '(org-export-with-drawers (quote (not)))
+ '(org-icalendar-alarm-time 5)
+ '(org-icalendar-use-scheduled (quote (event-if-todo)))
+ '(org-image-actual-width (quote (200)))
+ '(org-journal-dir "~/Dropbox/orgjournal/")
+ '(org-refile-targets
+   (quote
+    ((org-agenda-files :maxlevel . 3)
+     (nil :maxlevel . 2))))
+ '(org-use-tag-inheritance t)
+ '(whitespace-line-column 120))
+
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC emacs-lisp
+
+(global-set-key (kbd "C-x f") 'toggle-frame-fullscreen)
+
+#+END_SRC
