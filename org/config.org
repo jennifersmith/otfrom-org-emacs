@@ -44,6 +44,8 @@ Helpful to be able to get straight to my config. Weird naming but whevs.
 
 #+END_SRC
 
+: jump-to-config
+
 ** Custom settings location
 
 Avoid polluting init.el with custom settings - this can be a temporary stop-gap before they wind up in here or just grow if I can't be bothered to do anything with them.
@@ -55,3 +57,176 @@ Avoid polluting init.el with custom settings - this can be a temporary stop-gap 
 #+END_SRC
 
 
+
+** Better defaults:
+
+Lots of things [[https://github.com/technomancy/better-defaults][listed here]], most of which I might have previously configured.
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package better-defaults)
+
+#+END_SRC
+
+** Enable diminish-mode
+
+Diminish-mode provides support for abbreviating/shortening the list of modes on the mode-line.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish)
+#+END_SRC
+
+
+** uniquify buffer names
+
+Unique naming buffers - got kind of used to the post-forward style filename|path approach.
+
+This comes as part of better-defaults, but need to make sure it uses postforward
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package uniquify
+  :config (setq uniquify-buffer-name-style 'post-forward))
+
+#+END_SRC
+
+
+** Flycheck
+
+Syntax checks on the fly
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode)
+(flycheck-add-mode 'javascript-eslint 'js2-mode))
+
+
+#+END_SRC
+** Install markdown-mode
+
+Markdown mode and friends.
+
+#+BEGIN_SRC emacs-lisp
+ 
+   (use-package markdown-mode)
+   (use-package markdown-mode+)
+   (use-package markdown-preview-mode)
+#+END_SRC
+
+#+RESULTS:
+: markdown-preview-mode
+
+
+** Yaml support (mode and validation)
+
+Guess it's better than editing json
+
+#+BEGIN_SRC 
+(use-package yaml-mode)
+(use-package flycheck-yamllint)
+
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))
+#+END_SRC
+
+*** NOTE: flycheck-yamllint needs yamllint
+    
+** Javascript js2-mode
+#+BEGIN_SRC emacs-lisp
+
+(use-package js2-mode
+:mode "\\.js\\'"
+:init 
+ (setq js2-highlight-level 3)
+ (setq js2-strict-missing-semi-warning nil)
+ (setq js2-strict-trailing-comma-warning nil)
+ (setq js2-strict-missing-semi-warning nil))
+
+#+END_SRC
+** Javascript - rjsx-mode
+
+Enable it for anything roughly componentular in shape
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package rjsx-mode
+:diminish rjsx-mode
+:init (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
+(add-to-list 'auto-mode-alist '("stories\\/.*\\.js\\'" . rjsx-mode)))
+
+#+END_SRC
+
+** es-lint support
+
+#+BEGIN_SRC emacs-lisp
+(use-package eslint-fix
+:init 
+(add-hook 'js2-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t)))
+(add-hook 'rjsx-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t))))
+
+#+END_SRC
+
+** which-key shortcuts
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package which-key
+:config 
+(which-key-mode))
+
+#+END_SRC
+
+
+
+** auto complete
+#+BEGIN_SRC emacs-lisp
+(use-package auto-complete
+:config (ac-config-default))
+#+END_SRC
+
+** Zooming sublime style
+
+I like what sublime does so let me try to recreate it. Maybe could be a mode but whev.
+#+BEGIN_SRC emacs-lisp
+(defun birds-eye-view ()
+"zoom out to silly scales"
+(interactive)
+(text-scale-set -10))
+(defun birds-eye-view-off ()
+"normal view"
+(interactive)
+(text-scale-set 0))
+#+END_SRC
+
+
+** Fix paths to use /usr/local/bin
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'exec-path "/usr/local/bin")
+   
+   #+END_SRC
+** Git
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package magit-mode)
+
+#+END_SRC
+
+** Clojurescript and clojure
+
+#+BEGIN_SRC emacs-lisp
+(use-package clojure-mode)
+(use-package cider)
+
+(use-package ac-cider
+:config
+(add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+(add-hook 'cider-mode-hook 'ac-cider-setup)
+(add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+(eval-after-load "auto-complete"
+  '(progn
+     (add-to-list 'ac-modes 'cider-mode)
+     (add-to-list 'ac-modes 'cider-repl-mode))))
+#+END_SRC

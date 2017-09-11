@@ -21,7 +21,7 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-
+;; todo: dont really need this any more with use-package
 (defun maybe-install-and-require (p)
   "Install elpa package P if we haven't done that yet."
   (when (not (package-installed-p p))
@@ -29,6 +29,10 @@
   (require p))
 
 (maybe-install-and-require 'org)
+
+(maybe-install-and-require 'use-package)
+
+(setq use-package-always-ensure t)
 
 (org-babel-load-file (concat (getenv "HOME") "/.emacs.d/org/config.org"))
 
